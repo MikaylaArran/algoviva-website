@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Globe from '@/components/Globe'
 
-// ── Types ────────────────────────────────────────────────────
 type Sector = 'financial' | 'health' | 'government' | 'civil'
 
 const SECTORS: { id: Sector; label: string }[] = [
@@ -13,7 +13,6 @@ const SECTORS: { id: Sector; label: string }[] = [
   { id: 'civil', label: 'Civil Society' },
 ]
 
-// ── Journey SVG (reused per sector with different labels) ─────
 function JourneySVG({ id, labels }: { id: string; labels: string[][] }) {
   return (
     <svg className="journey-svg" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg" id={id}>
@@ -24,24 +23,18 @@ function JourneySVG({ id, labels }: { id: string; labels: string[][] }) {
       <path d="M210 340 A130 130 0 0 1 80 210" stroke="rgba(26,148,112,0.35)" strokeWidth="2" fill="none" strokeLinecap="round"/>
       <path d="M80 210 A130 130 0 0 1 210 80" stroke="rgba(26,148,112,0.35)" strokeWidth="2" fill="none" strokeLinecap="round"/>
       <polygon points="340,200 348,210 340,220" fill="#1A9470" opacity="0.7"/>
-      {/* Nodes */}
       <circle cx="210" cy="80" r="28" fill="rgba(26,148,112,0.18)" stroke="#1A9470" strokeWidth="1.5"/>
       <circle cx="340" cy="210" r="28" fill="rgba(26,148,112,0.08)" stroke="rgba(26,148,112,0.35)" strokeWidth="1"/>
       <circle cx="210" cy="340" r="28" fill="rgba(26,148,112,0.08)" stroke="rgba(26,148,112,0.35)" strokeWidth="1"/>
       <circle cx="80" cy="210" r="28" fill="rgba(26,148,112,0.08)" stroke="rgba(26,148,112,0.35)" strokeWidth="1"/>
-      {/* Top label */}
       <text x="210" y="74" textAnchor="middle" fill="#8FD9C0" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[0][0]}</text>
       <text x="210" y="85" textAnchor="middle" fill="#8FD9C0" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[0][1]}</text>
-      {/* Right label */}
       <text x="340" y="205" textAnchor="middle" fill="rgba(143,217,192,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[1][0]}</text>
       <text x="340" y="216" textAnchor="middle" fill="rgba(143,217,192,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[1][1]}</text>
-      {/* Bottom label */}
       <text x="210" y="334" textAnchor="middle" fill="rgba(143,217,192,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[2][0]}</text>
       <text x="210" y="345" textAnchor="middle" fill="rgba(143,217,192,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[2][1]}</text>
-      {/* Left label */}
       <text x="80" y="205" textAnchor="middle" fill="rgba(143,217,192,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[3][0]}</text>
       <text x="80" y="216" textAnchor="middle" fill="rgba(143,217,192,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[3][1]}</text>
-      {/* Centre */}
       <circle cx="210" cy="210" r="46" fill="rgba(26,148,112,0.1)" stroke="rgba(26,148,112,0.2)" strokeWidth="1"/>
       <text x="210" y="205" textAnchor="middle" fill="rgba(143,217,192,0.8)" fontSize="10" fontFamily="Cormorant Garamond,serif" fontStyle="italic">Your</text>
       <text x="210" y="220" textAnchor="middle" fill="rgba(143,217,192,0.8)" fontSize="10" fontFamily="Cormorant Garamond,serif" fontStyle="italic">journey</text>
@@ -49,7 +42,6 @@ function JourneySVG({ id, labels }: { id: string; labels: string[][] }) {
   )
 }
 
-// ── Sector data ───────────────────────────────────────────────
 const sectorData = {
   financial: {
     tag: 'Financial Services',
@@ -129,7 +121,6 @@ const sectorData = {
   },
 }
 
-// ── Main Page ─────────────────────────────────────────────────
 export default function Home() {
   const [activeSector, setActiveSector] = useState<Sector>('financial')
   const [activeCards, setActiveCards] = useState<Record<Sector, number>>({
@@ -137,7 +128,6 @@ export default function Home() {
   })
   const revealRefs = useRef<(HTMLElement | null)[]>([])
 
-  // Scroll reveal
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('visible') }),
@@ -156,23 +146,28 @@ export default function Home() {
   return (
     <>
       {/* HERO */}
-      <section className="hero">
+      <section className="hero hero-split">
         <div className="hero-bg" />
         <div className="hero-grid" />
-        <div className="hero-inner">
-          <div className="african-badge">Black African-owned and led</div>
-          <div className="hero-tag">Ethical AI · South Africa · Africa</div>
-          <h1>AI that serves <em>people</em><br />and planet</h1>
-          <p className="hero-sub">
-            AlgoViva helps organisations in financial services, health, government, and civil society build AI systems that are trustworthy, accountable, and genuinely fit for the African context. We bring the expertise. We carry the values. We have skin in the game.
-          </p>
-          <div className="hero-actions">
-            <a href="#sectors" className="btn-p">Find your sector</a>
-            <a href="#about" className="btn-g">Who we are</a>
+        <div className="hero-split-inner">
+          <div className="hero-text">
+            <div className="african-badge">Black African-owned and led</div>
+            <div className="hero-tag">Ethical AI · South Africa · Africa</div>
+            <h1>AI that serves <em>people</em><br />and planet</h1>
+            <p className="hero-sub">
+              AlgoViva helps organisations in financial services, health, government, and civil society build AI systems that are trustworthy, accountable, and genuinely fit for the African context. We bring the expertise. We carry the values. We have skin in the game.
+            </p>
+            <div className="hero-actions">
+              <a href="#sectors" className="btn-p">Find your sector</a>
+              <a href="#about" className="btn-g">Who we are</a>
+            </div>
+            <div className="hero-footer">
+              <span className="hero-footer-label">Recognised by</span>
+              <span className="iapp-pill">IAPP 2026 AI Governance Vendor Report · All four vendor categories</span>
+            </div>
           </div>
-          <div className="hero-footer">
-            <span className="hero-footer-label">Recognised by</span>
-            <span className="iapp-pill">IAPP 2026 AI Governance Vendor Report · All four vendor categories</span>
+          <div className="hero-globe-wrap">
+            <Globe />
           </div>
         </div>
       </section>
@@ -204,7 +199,6 @@ export default function Home() {
               id={`sector-${s.id}`}
               data-sector={s.id}
             >
-              {/* Sector hero */}
               <div className="sh">
                 <div>
                   <div className="sector-tag">{d.tag}</div>
@@ -222,7 +216,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Journey section */}
               <div className="journey-section">
                 <div className="journey-top">
                   <div className="journey-label-w">Your journey with AlgoViva</div>
@@ -320,12 +313,12 @@ export default function Home() {
             <div className="about-bio">
               <div className="about-bio-name">The AlgoViva Team</div>
               <div className="about-bio-role">Johannesburg, South Africa</div>
-              <div className="about-bio-text">We are a small, focused team of AI governance specialists, policy thinkers, technical assessors, and community advocates. What we share is a conviction that AI in Africa must be built differently, and that the people best placed to ensure that are Africans. We bring together expertise in law, computer science, social science, and organisational design because responsible AI cannot be addressed by any one discipline alone.</div>
+              <div className="about-bio-text">We are a small, focused team of AI governance specialists, policy thinkers, technical assessors, and community advocates. What we share is a conviction that AI in Africa must be built differently, and that the people best placed to ensure that are Africans.</div>
             </div>
             <div className="about-bio">
               <div className="about-bio-name">Our Fellows Network</div>
               <div className="about-bio-role">Across Africa</div>
-              <div className="about-bio-text">We work with a network of senior Fellows: retired regulators, academic researchers, civil society leaders, and technical AI specialists who are affiliated with AlgoViva and contribute to specific engagements. This means our clients get depth of expertise that goes beyond what any small team could hold internally.</div>
+              <div className="about-bio-text">We work with a network of senior Fellows: retired regulators, academic researchers, civil society leaders, and technical AI specialists who contribute to specific engagements.</div>
             </div>
             <div className="about-mission">
               <div className="about-mission-label">Our purpose</div>
@@ -345,8 +338,8 @@ export default function Home() {
           <div className="ao-points">
             {[
               { title: 'We see what others miss', body: 'Global AI governance frameworks were designed for European and North American contexts. They do not account for POPIA, Ubuntu ethics, informal data practices, low-resource language bias, or the specific power asymmetries of African labour and credit markets. We do.' },
-              { title: 'We carry shared stakes', body: 'When AI systems in South Africa produce discriminatory credit decisions or biased policing tools, they affect our families and our communities. We are not dispassionate advisors. We have skin in the game, and our clients feel the difference that makes.' },
-              { title: 'We build institutions, not dependence', body: 'Every engagement we undertake is designed to leave our clients more capable, not more reliant. African institutions governing AI well is the outcome we are working toward. Our success is measured by the capability we leave behind.' },
+              { title: 'We carry shared stakes', body: 'When AI systems in South Africa produce discriminatory credit decisions or biased policing tools, they affect our families and our communities. We are not dispassionate advisors. We have skin in the game.' },
+              { title: 'We build institutions, not dependence', body: 'Every engagement we undertake is designed to leave our clients more capable, not more reliant. African institutions governing AI well is the outcome we are working toward.' },
             ].map((pt, i) => (
               <div className="ao-point" key={i}>
                 <div className="ao-icon">◆</div>
@@ -422,13 +415,13 @@ export default function Home() {
         <div ref={addReveal} className="reveal">
           <div className="section-label">Track record</div>
           <h2 className="section-title">Built for Africa.<br />Recognised globally.</h2>
-          <p className="section-body" style={{ maxWidth: 520 }}>Our work is grounded in African contexts and validated by international standards. We hold both without apology.</p>
+          <p className="section-body" style={{ maxWidth: 520 }}>Our work is grounded in African contexts and validated by international standards.</p>
         </div>
         <div className="auth-grid">
           {[
-            { num: <><span>4</span>/4</>, label: 'IAPP vendor categories', body: 'Named in all four categories of the IAPP 2026 AI Governance Vendor Report — one of only a handful of firms globally to achieve this across AI Assurance, Governance, Rights, and Assessment.' },
-            { num: <>1<span>st</span></>, label: 'African AI benchmark', body: 'Navigator is building the first and only African AI governance benchmark. No global firm holds this data. No other African firm is systematically generating it.' },
-            { num: <><span>3</span></>, label: 'Integrated service areas', body: 'Assurance. Governance. Digital Rights. Three practices that work together, designed for the specific complexity of AI governance in African organisational contexts.' },
+            { num: <><span>4</span>/4</>, label: 'IAPP vendor categories', body: 'Named in all four categories of the IAPP 2026 AI Governance Vendor Report — one of only a handful of firms globally to achieve this.' },
+            { num: <>1<span>st</span></>, label: 'African AI benchmark', body: 'Navigator is building the first and only African AI governance benchmark. No global firm holds this data.' },
+            { num: <><span>3</span></>, label: 'Integrated service areas', body: 'Assurance. Governance. Digital Rights. Three practices that work together for African organisational contexts.' },
           ].map((a, i) => (
             <div key={i} ref={addReveal} className="reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
               <div className="auth-num">{a.num}</div>
@@ -440,7 +433,7 @@ export default function Home() {
         <div className="iapp-block">
           <div className="iapp-text-area">
             <strong>IAPP 2026 AI Governance Vendor Report</strong>
-            <p>AlgoViva has been named in all four vendor categories of the IAPP 2026 AI Governance Vendor Report. This is the leading global assessment of AI governance service providers. We are one of only a handful of firms worldwide to appear across all four categories — and the only African firm to do so.</p>
+            <p>AlgoViva has been named in all four vendor categories — the only African firm to do so.</p>
           </div>
           <div className="iapp-cats">
             {['AI Assurance & Auditing', 'AI Governance Frameworks', 'Digital Rights & Compliance', 'AI Risk Assessment'].map((cat) => (
@@ -455,16 +448,16 @@ export default function Home() {
         <div ref={addReveal} className="reveal">
           <div className="section-label">Resources</div>
           <h2 className="section-title">Thinking publicly<br />about AI governance</h2>
-          <p className="section-body" style={{ maxWidth: 520 }}>We publish what we learn. Frameworks, case insights, policy briefs, and African Digital Rights updates. Our thought leadership is part of how we build the field, not just our profile.</p>
+          <p className="section-body" style={{ maxWidth: 520 }}>We publish what we learn. Frameworks, case insights, policy briefs, and African Digital Rights updates.</p>
         </div>
         <div className="res-grid" ref={addReveal} style={{ transitionDelay: '0.1s' }}>
           {[
-            { tag: 'Framework', title: 'AlgoViva AI Governance Principles', desc: 'Our public framework for responsible AI governance in African organisational contexts. Structured around people, processes, and technology. Updated annually.', footer: '◆ Working paper · 2025' },
-            { tag: 'Policy brief', title: 'POPIA and AI: What financial services institutions need to know', desc: 'A practical guide to POPIA obligations on automated decision-making for South African financial institutions. What the law requires and what good practice looks like.', footer: '◆ Insight · 2025' },
-            { tag: 'Digital Rights brief', title: 'African Digital Rights Monitor: Q2 2025', desc: 'Tracking AI harms, rights developments, and community impacts across South Africa, Kenya, and Nigeria. Published quarterly.', footer: '◆ Quarterly brief · Q2 2025' },
-            { tag: 'Methodology', title: 'AlgoViva Algorithmic Audit Methodology', desc: 'How we audit AI systems: the people, process, and technology dimensions we examine, and why purely technical audits miss what matters most.', footer: '◆ Working paper · 2025' },
-            { tag: 'Case insight', title: 'Bias in automated credit scoring: what we found', desc: 'An anonymised account of findings from an AI assurance engagement in the South African financial services sector. The patterns that recur and what they mean.', footer: '◆ Case insight · 2025' },
-            { tag: 'AlgoViva Kids', title: '2025 Impact Report: AlgoViva Kids', desc: 'What we learned from bringing AI literacy and ethics education into South African schools and community organisations. The next generation is not waiting.', footer: '◆ Annual report · 2025' },
+            { tag: 'Framework', title: 'AlgoViva AI Governance Principles', desc: 'Our public framework for responsible AI governance in African organisational contexts.', footer: '◆ Working paper · 2025' },
+            { tag: 'Policy brief', title: 'POPIA and AI: What financial services institutions need to know', desc: 'A practical guide to POPIA obligations on automated decision-making for South African financial institutions.', footer: '◆ Insight · 2025' },
+            { tag: 'Digital Rights brief', title: 'African Digital Rights Monitor: Q2 2025', desc: 'Tracking AI harms, rights developments, and community impacts across South Africa, Kenya, and Nigeria.', footer: '◆ Quarterly brief · Q2 2025' },
+            { tag: 'Methodology', title: 'AlgoViva Algorithmic Audit Methodology', desc: 'How we audit AI systems and why purely technical audits miss what matters most.', footer: '◆ Working paper · 2025' },
+            { tag: 'Case insight', title: 'Bias in automated credit scoring: what we found', desc: 'An anonymised account of findings from an AI assurance engagement in South African financial services.', footer: '◆ Case insight · 2025' },
+            { tag: 'AlgoViva Kids', title: '2025 Impact Report: AlgoViva Kids', desc: 'What we learned from bringing AI literacy and ethics education into South African schools.', footer: '◆ Annual report · 2025' },
           ].map((r, i) => (
             <a href="#" className="res-card" key={i}>
               <div className="res-tag">{r.tag}</div>
@@ -481,7 +474,7 @@ export default function Home() {
         <div ref={addReveal} className="reveal">
           <div className="section-label">AlgoViva Kids</div>
           <h2 className="section-title">Ethical AI starts<br />with the next generation</h2>
-          <p className="section-body">We believe the communities most affected by AI deserve agency in how it develops, and that starts with young people. AlgoViva Kids brings AI literacy, rights education, and ethical thinking into schools and community organisations across South Africa. It is not a programme. It is our perspective made tangible.</p>
+          <p className="section-body">We believe the communities most affected by AI deserve agency in how it develops, and that starts with young people. AlgoViva Kids brings AI literacy, rights education, and ethical thinking into schools and community organisations across South Africa.</p>
         </div>
         <div ref={addReveal} className="kids-card reveal" style={{ transitionDelay: '0.15s' }}>
           <p>&ldquo;Ethical AI cannot be built by the few for the many. It must be shaped by the many, including those who will live with its consequences longest.&rdquo;</p>
@@ -494,7 +487,7 @@ export default function Home() {
         <div ref={addReveal} className="reveal">
           <div className="section-label">Work with us</div>
           <h2 className="section-title">Ready to take AI<br />governance seriously?</h2>
-          <p className="section-body">Tell us where you are starting from and we will tell you how we can help. Every engagement begins with a conversation, and we come to that conversation as people who understand what is at stake here.</p>
+          <p className="section-body">Tell us where you are starting from and we will tell you how we can help.</p>
         </div>
         <div className="cta-cards" ref={addReveal} style={{ transitionDelay: '0.1s' }}>
           {[
@@ -516,8 +509,6 @@ export default function Home() {
           <p className="cta-loc">Johannesburg, South Africa · www.algoviva.com</p>
         </div>
       </section>
-
-
     </>
   )
 }
