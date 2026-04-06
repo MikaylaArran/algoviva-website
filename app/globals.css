@@ -110,8 +110,8 @@ nav {
 .hero-bg {
   position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 55% 45% at 75% 25%, rgba(41,63,148,0.2) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 55% at 15% 75%, rgba(41,63,148,0.15) 0%, transparent 55%);
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(41,63,148,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 50% at 10% 80%, rgba(26,148,112,0.07) 0%, transparent 50%);
 }
 .hero-grid {
   position: absolute; inset: 0; pointer-events: none;
@@ -120,8 +120,6 @@ nav {
     linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
   background-size: 56px 56px;
 }
-
-/* Split hero layout */
 .hero-split-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -148,13 +146,11 @@ nav {
 @media (max-width: 860px) {
   .hero-split-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
   .hero-globe-wrap { order: -1; }
-  .hero-globe-wrap canvas { max-width: 260px !important; }
   .hero-tag { justify-content: center !important; }
   .hero-actions { justify-content: center !important; }
   .hero-footer { justify-content: center !important; }
   .hero-sub { margin-left: auto !important; margin-right: auto !important; }
 }
-
 .hero-tag {
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
@@ -503,8 +499,8 @@ footer {
 .page-hero-bg {
   position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 55% 45% at 75% 25%, rgba(41,63,148,0.15) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 55% at 15% 75%, rgba(41,63,148,0.12) 0%, transparent 55%);
+    radial-gradient(ellipse 55% 45% at 75% 25%, rgba(41,63,148,0.1) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 55% at 15% 75%, rgba(26,148,112,0.07) 0%, transparent 55%);
 }
 .page-hero-grid {
   position: absolute; inset: 0; pointer-events: none;

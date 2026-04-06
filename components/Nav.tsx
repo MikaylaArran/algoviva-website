@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 export default function Nav() {
@@ -19,7 +20,16 @@ export default function Nav() {
 
   return (
     <nav>
-      <Link href="/" className="nav-logo">Algo<span>Viva</span></Link>
+      <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+        <Image
+          src="/logo.png"
+          alt="AlgoViva"
+          width={140}
+          height={52}
+          style={{ objectFit: 'contain', height: 38, width: 'auto' }}
+          priority
+        />
+      </Link>
       <button
         className={`nav-hamburger${open ? ' open' : ''}`}
         onClick={() => setOpen(!open)}
