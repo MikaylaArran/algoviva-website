@@ -1,16 +1,16 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import createGlobe, { COBEOptions } from 'cobe'
+import createGlobe from 'cobe'
 
 export default function Globe() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const globeRef = useRef<ReturnType<typeof createGlobe>>()
+  const globeRef = useRef<any>()
 
   useEffect(() => {
     let phi = 0.35
 
-    const options: COBEOptions = {
+    globeRef.current = createGlobe(canvasRef.current!, {
       devicePixelRatio: 2,
       width: 800,
       height: 800,
@@ -27,13 +27,11 @@ export default function Globe() {
         { location: [-26.2, 28.0], size: 0.08 },
         { location: [-33.9, 18.4], size: 0.05 },
       ],
-      onRender: (state) => {
+      onRender: (state: Record<string, any>) => {
         phi += 0.003
         state.phi = phi
       },
-    }
-
-    globeRef.current = createGlobe(canvasRef.current!, options)
+    } as any)
 
     return () => globeRef.current?.destroy()
   }, [])
