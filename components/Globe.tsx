@@ -1,17 +1,16 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import createGlobe from 'cobe'
+import createGlobe, { COBEOptions } from 'cobe'
 
 export default function Globe() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const globeRef = useRef<any>(null)
-  const rotationRef = useRef(0.35) // start centred on Africa
+  const globeRef = useRef<ReturnType<typeof createGlobe>>()
 
   useEffect(() => {
     let phi = 0.35
 
-    globeRef.current = createGlobe(canvasRef.current!, {
+    const options: COBEOptions = {
       devicePixelRatio: 2,
       width: 800,
       height: 800,
@@ -21,24 +20,22 @@ export default function Globe() {
       diffuse: 1.4,
       mapSamples: 20000,
       mapBrightness: 6,
-      baseColor: [0.1, 0.15, 0.35],       // dark navy base
-      markerColor: [0.16, 0.25, 0.58],     // brand blue #293F94
-      glowColor: [0.16, 0.25, 0.58],       // brand blue glow
+      baseColor: [0.1, 0.15, 0.35],
+      markerColor: [0.16, 0.25, 0.58],
+      glowColor: [0.16, 0.25, 0.58],
       markers: [
-        // South Africa — Johannesburg
         { location: [-26.2, 28.0], size: 0.08 },
-        // Cape Town
         { location: [-33.9, 18.4], size: 0.05 },
       ],
-      onRender: (state: any) => {
+      onRender: (state) => {
         phi += 0.003
         state.phi = phi
       },
-    })
-
-    return () => {
-      if (globeRef.current) globeRef.current.destroy()
     }
+
+    globeRef.current = createGlobe(canvasRef.current!, options)
+
+    return () => globeRef.current?.destroy()
   }, [])
 
   return (
@@ -47,15 +44,10 @@ export default function Globe() {
       maxWidth: 560,
       margin: '0 auto',
       aspectRatio: '1',
-      position: 'relative',
     }}>
       <canvas
         ref={canvasRef}
-        style={{
-          width: '100%',
-          height: '100%',
-          cursor: 'grab',
-        }}
+        style={{ width: '100%', height: '100%' }}
       />
     </div>
   )
