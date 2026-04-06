@@ -102,7 +102,8 @@ nav {
 
 /* ── HERO ───────────────────────────────────────────────────── */
 .hero {
-  min-height: 100vh; background: var(--navy);
+  min-height: 100vh;
+  background: #ffffff;
   display: flex; align-items: center;
   padding: 100px clamp(20px, 5vw, 80px) 80px;
   position: relative; overflow: hidden;
@@ -110,14 +111,14 @@ nav {
 .hero-bg {
   position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(41,63,148,0.1) 0%, transparent 50%),
-    radial-gradient(ellipse 35% 50% at 10% 80%, rgba(26,148,112,0.07) 0%, transparent 50%);
+    radial-gradient(ellipse 50% 40% at 85% 15%, rgba(41,63,148,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 50% at 10% 85%, rgba(26,148,112,0.04) 0%, transparent 55%);
 }
 .hero-grid {
   position: absolute; inset: 0; pointer-events: none;
   background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
   background-size: 56px 56px;
 }
 .hero-split-inner {
@@ -154,14 +155,14 @@ nav {
 .hero-tag {
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 10px; font-weight: 500; letter-spacing: 0.16em;
-  text-transform: uppercase; color: var(--teal-m); margin-bottom: 28px;
+  text-transform: uppercase; color: var(--brand); margin-bottom: 28px;
 }
 .hero-tag::before {
-  content: ''; display: block; width: 28px; height: 1px; background: var(--teal-m);
+  content: ''; display: block; width: 28px; height: 1px; background: var(--brand);
 }
 .african-badge {
   display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(196,154,60,0.12); border: 1px solid rgba(196,154,60,0.3);
+  background: rgba(196,154,60,0.1); border: 1px solid rgba(196,154,60,0.3);
   border-radius: 20px; padding: 5px 14px; margin-bottom: 20px;
   font-size: 11px; font-weight: 500; color: var(--gold); letter-spacing: 0.04em;
 }
@@ -169,12 +170,12 @@ nav {
 .hero h1 {
   font-family: var(--serif); font-size: clamp(40px, 5.5vw, 72px);
   font-weight: 700; line-height: 1.06; letter-spacing: -0.02em;
-  color: var(--white); margin-bottom: 24px;
+  color: var(--navy); margin-bottom: 24px;
 }
-.hero h1 em { font-style: italic; color: var(--teal-m); }
+.hero h1 em { font-style: italic; color: var(--brand); }
 .hero-sub {
   font-size: clamp(15px, 1.6vw, 17px); line-height: 1.7;
-  color: rgba(255,255,255,0.55); max-width: 520px;
+  color: var(--muted); max-width: 520px;
   margin-bottom: 44px; font-weight: 300;
 }
 .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -186,21 +187,21 @@ nav {
 }
 .btn-p:hover { opacity: 0.88; transform: translateY(-1px); }
 .btn-g {
-  border: 1px solid rgba(255,255,255,0.22); color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(0,0,0,0.15); color: var(--muted);
   font-size: 14px; font-weight: 400; padding: 13px 30px;
   border-radius: var(--r); text-decoration: none;
   transition: border-color 0.18s, color 0.18s; display: inline-block;
 }
-.btn-g:hover { border-color: rgba(255,255,255,0.55); color: var(--white); }
+.btn-g:hover { border-color: var(--navy); color: var(--navy); }
 .hero-footer {
   margin-top: 48px; padding-top: 32px;
-  border-top: 1px solid rgba(255,255,255,0.09);
+  border-top: 1px solid rgba(0,0,0,0.08);
   display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
 }
-.hero-footer-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+.hero-footer-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--light); }
 .iapp-pill {
-  font-size: 11px; font-weight: 500; color: var(--teal-m);
-  border: 1px solid rgba(143,217,192,0.35); border-radius: 20px; padding: 4px 14px;
+  font-size: 11px; font-weight: 500; color: var(--brand);
+  border: 1px solid rgba(41,63,148,0.2); border-radius: 20px; padding: 4px 14px;
 }
 
 /* ── SECTOR NAV ─────────────────────────────────────────────── */
