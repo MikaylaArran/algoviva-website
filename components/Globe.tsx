@@ -9,8 +9,8 @@ const SOUTH_AFRICA_DOT = [
   {
     lat: -29.0,
     lng: 25.0,
-    size: 0.8,
-    color: '#00C2FF',
+    size: 0.7,
+    color: '#293F94',
     label: 'Johannesburg, South Africa',
   },
 ]
@@ -35,7 +35,7 @@ export default function Globe() {
         width={560}
         height={560}
         backgroundColor="rgba(0,0,0,0)"
-        globeImageUrl="https://unpkg.com/three-globe@2.31.0/example/img/earth-night.jpg"
+        globeImageUrl="https://unpkg.com/three-globe@2.31.0/example/img/earth-day.jpg"
         bumpImageUrl="https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png"
         pointsData={SOUTH_AFRICA_DOT}
         pointLat="lat"
@@ -44,8 +44,8 @@ export default function Globe() {
         pointRadius="size"
         pointAltitude={0.05}
         pointLabel="label"
-        atmosphereColor="#293F94"
-        atmosphereAltitude={0.2}
+        atmosphereColor="#4a7fc1"
+        atmosphereAltitude={0.15}
       />
     </div>
   )
