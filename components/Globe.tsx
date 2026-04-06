@@ -3,15 +3,14 @@
 import dynamic from 'next/dynamic'
 import { useEffect, useRef } from 'react'
 
-// Must be dynamically imported — no SSR, needs browser/WebGL
 const ReactGlobe = dynamic(() => import('react-globe.gl'), { ssr: false })
 
 const SOUTH_AFRICA_DOT = [
   {
     lat: -29.0,
     lng: 25.0,
-    size: 0.6,
-    color: '#293F94',
+    size: 0.8,
+    color: '#00C2FF',
     label: 'Johannesburg, South Africa',
   },
 ]
@@ -21,35 +20,32 @@ export default function Globe() {
 
   useEffect(() => {
     if (!globeRef.current) return
-
-    // Start auto-rotation
     const controls = globeRef.current.controls()
     controls.autoRotate = true
-    controls.autoRotateSpeed = 0.6
+    controls.autoRotateSpeed = 0.7
     controls.enableZoom = false
     controls.enablePan = false
-
-    // Point camera at Africa on load
-    globeRef.current.pointOfView({ lat: -15, lng: 25, altitude: 1.8 }, 0)
+    globeRef.current.pointOfView({ lat: -15, lng: 25, altitude: 1.6 }, 0)
   }, [])
 
   return (
-    <div style={{ width: '100%', maxWidth: 480, margin: '0 auto' }}>
+    <div style={{ width: '100%', maxWidth: 560, margin: '0 auto' }}>
       <ReactGlobe
         ref={globeRef}
-        width={480}
-        height={480}
+        width={560}
+        height={560}
         backgroundColor="rgba(0,0,0,0)"
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-dark.jpg"
+        globeImageUrl="https://unpkg.com/three-globe@2.31.0/example/img/earth-night.jpg"
+        bumpImageUrl="https://unpkg.com/three-globe@2.31.0/example/img/earth-topology.png"
         pointsData={SOUTH_AFRICA_DOT}
         pointLat="lat"
         pointLng="lng"
         pointColor="color"
         pointRadius="size"
-        pointAltitude={0.02}
+        pointAltitude={0.05}
         pointLabel="label"
         atmosphereColor="#293F94"
-        atmosphereAltitude={0.18}
+        atmosphereAltitude={0.2}
       />
     </div>
   )
