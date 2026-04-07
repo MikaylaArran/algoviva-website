@@ -50,9 +50,6 @@ export default function ResourcesPage() {
       <section style={{ background: 'var(--navy)', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
         <div className="section-label" style={{ color: 'var(--teal-m)' }}>Stay updated</div>
         <h2 className="section-title" style={{ color: 'var(--white)' }}>New resources, as we publish them.</h2>
-        <p className="section-body" style={{ color: 'rgba(255,255,255,0.5)', maxWidth: 480, marginBottom: 36 }}>
-          We publish policy briefs, case insights, and the African Digital Rights Monitor quarterly. Get in touch to be added to our mailing list.
-        </p>
         <a href="/contact" className="btn-p">Get in touch</a>
       </section>
     </>
