@@ -94,10 +94,10 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
       c.stroke()
       c.restore()
 
-      const tip = a
+      const tip = a + Math.PI * 0.4
       const tx = CX + R * Math.cos(tip)
       const ty = CY + R * Math.sin(tip)
-      const perp = tip + Math.PI / 2
+      const perp = tip - Math.PI / 2
       c.save()
       c.beginPath()
       c.moveTo(tx + 9 * Math.cos(perp - 0.45), ty + 9 * Math.sin(perp - 0.45))
