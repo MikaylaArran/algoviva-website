@@ -2,10 +2,77 @@
 
 import { useEffect, useRef } from 'react'
 
+// Simplified but accurate continent outline coordinates [lat, lng]
+const CONTINENTS: [number, number][][] = [
+  // Africa
+  [
+    [37,10],[37,37],[30,42],[15,42],[11,44],[8,42],[4,35],[0,42],[-5,40],
+    [-12,40],[-18,36],[-26,33],[-35,27],[-35,18],[-28,17],[-22,14],[-16,12],
+    [-5,10],[3,7],[4,2],[5,-2],[3,-8],[4,-8],[5,-5],[6,-2],[5,1],
+    [6,3],[5,7],[5,3],[6,2],[6,-1],[8,0],[10,-5],[14,-17],[18,-16],
+    [22,-16],[26,-14],[30,-10],[32,-5],[37,10]
+  ],
+  // Europe
+  [
+    [36,-6],[36,28],[38,26],[38,34],[42,28],[44,34],[46,30],[48,22],
+    [52,20],[54,18],[56,20],[58,22],[60,24],[62,26],[65,14],[68,16],
+    [70,20],[70,28],[65,14],[62,5],[58,5],[55,8],[52,4],[50,2],
+    [48,-2],[44,-2],[42,-2],[40,-8],[36,-6]
+  ],
+  // Asia
+  [
+    [38,26],[42,40],[45,50],[50,58],[55,68],[60,68],[65,72],[70,68],
+    [72,72],[70,80],[68,80],[65,88],[60,100],[55,100],[52,100],[48,88],
+    [44,78],[40,72],[36,72],[30,68],[24,68],[20,72],[16,74],[10,78],
+    [8,78],[8,80],[10,80],[8,76],[6,80],[4,74],[2,104],[0,108],
+    [-8,116],[-8,116],[-4,108],[0,108],[4,100],[8,98],[10,100],[14,100],
+    [18,100],[22,114],[26,120],[30,122],[36,128],[40,124],[44,132],
+    [48,136],[52,140],[56,138],[52,130],[48,128],[44,122],[40,130],
+    [36,140],[32,130],[28,122],[24,118],[20,110],[18,108],[14,100],
+    [10,104],[4,104],[2,110],[0,108],[4,100],[8,98],[10,100],[14,100],
+    [18,96],[22,92],[26,88],[30,80],[34,72],[38,56],[40,52],[42,50],
+    [38,44],[36,36],[38,34],[38,26]
+  ],
+  // North America
+  [
+    [70,-140],[70,-120],[68,-100],[65,-88],[62,-80],[58,-68],[52,-56],
+    [48,-54],[44,-60],[40,-70],[36,-76],[32,-80],[28,-82],[24,-88],
+    [20,-88],[16,-90],[14,-84],[10,-84],[8,-80],[10,-76],[14,-60],
+    [16,-62],[20,-72],[24,-76],[28,-80],[32,-80],[36,-76],[40,-70],
+    [44,-64],[48,-52],[52,-56],[56,-60],[60,-66],[64,-68],[68,-72],
+    [70,-80],[72,-96],[70,-108],[68,-116],[65,-122],[60,-128],[55,-130],
+    [50,-128],[45,-124],[40,-124],[36,-122],[32,-118],[28,-114],[24,-110],
+    [20,-106],[20,-98],[24,-98],[28,-96],[32,-94],[36,-90],[40,-88],
+    [44,-88],[48,-88],[52,-84],[56,-80],[60,-78],[64,-78],[68,-78],
+    [70,-80],[70,-100],[68,-108],[65,-116],[62,-120],[60,-130],[56,-134],
+    [52,-132],[48,-126],[44,-124],[40,-124],[36,-122],[32,-118],[28,-115],
+    [24,-110],[20,-105],[16,-92],[14,-90],[12,-86],[10,-84],[8,-78],
+    [8,-76],[10,-76],[14,-82],[18,-94],[20,-98],[24,-106],[28,-114],
+    [32,-118],[36,-122],[40,-124],[44,-124],[48,-126],[52,-132],[56,-136],
+    [60,-140],[64,-140],[68,-136],[70,-140]
+  ],
+  // South America
+  [
+    [10,-72],[8,-62],[4,-52],[0,-50],[-4,-36],[-8,-34],[-12,-38],
+    [-16,-40],[-20,-42],[-24,-44],[-28,-50],[-32,-54],[-36,-58],
+    [-40,-62],[-44,-66],[-48,-70],[-52,-72],[-56,-68],[-54,-64],
+    [-50,-60],[-46,-56],[-42,-52],[-38,-48],[-34,-44],[-30,-40],
+    [-26,-36],[-22,-42],[-18,-40],[-14,-38],[-10,-36],[-6,-36],
+    [-2,-40],[2,-50],[6,-58],[8,-62],[10,-72]
+  ],
+  // Australia
+  [
+    [-14,130],[-14,136],[-16,140],[-20,144],[-24,146],[-28,148],
+    [-32,150],[-36,148],[-38,144],[-36,138],[-34,134],[-32,128],
+    [-28,122],[-24,118],[-20,116],[-16,118],[-14,124],[-12,128],
+    [-14,130]
+  ],
+]
+
 export default function Globe() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number>(0)
-  const rotRef = useRef(0)
+  const rotRef = useRef(25)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -30,86 +97,6 @@ export default function Globe() {
       return { x, y, z }
     }
 
-    const landDots: [number, number][] = []
-
-    // Africa
-    for (let lat = -35; lat <= 37; lat += 3.5) {
-      for (let lng = -18; lng <= 51; lng += 3.5) {
-        const ok = (
-          (lat >= -35 && lat <= -25 && lng >= 16 && lng <= 33) ||
-          (lat >= -25 && lat <= -15 && lng >= 12 && lng <= 40) ||
-          (lat >= -15 && lat <= 0  && lng >= 10 && lng <= 42) ||
-          (lat >= 0   && lat <= 10 && lng >= -5 && lng <= 42) ||
-          (lat >= 10  && lat <= 20 && lng >= -18 && lng <= 43) ||
-          (lat >= 20  && lat <= 37 && lng >= -5 && lng <= 37)
-        )
-        if (ok) landDots.push([lat, lng])
-      }
-    }
-
-    // Europe
-    for (let lat = 35; lat <= 70; lat += 3.5) {
-      for (let lng = -10; lng <= 40; lng += 3.5) {
-        const ok = (
-          (lat >= 35 && lat <= 45 && lng >= -5 && lng <= 36) ||
-          (lat >= 45 && lat <= 55 && lng >= -5 && lng <= 30) ||
-          (lat >= 55 && lat <= 70 && lng >= 5 && lng <= 30)
-        )
-        if (ok) landDots.push([lat, lng])
-      }
-    }
-
-    // Asia
-    for (let lat = 0; lat <= 70; lat += 3.5) {
-      for (let lng = 40; lng <= 145; lng += 3.5) {
-        const ok = (
-          (lat >= 0  && lat <= 20 && lng >= 60 && lng <= 105) ||
-          (lat >= 20 && lat <= 40 && lng >= 40 && lng <= 125) ||
-          (lat >= 40 && lat <= 55 && lng >= 40 && lng <= 135) ||
-          (lat >= 55 && lat <= 70 && lng >= 60 && lng <= 145)
-        )
-        if (ok) landDots.push([lat, lng])
-      }
-    }
-
-    // North America
-    for (let lat = 15; lat <= 70; lat += 3.5) {
-      for (let lng = -170; lng <= -50; lng += 3.5) {
-        const ok = (
-          (lat >= 15 && lat <= 30 && lng >= -115 && lng <= -85) ||
-          (lat >= 30 && lat <= 50 && lng >= -125 && lng <= -65) ||
-          (lat >= 50 && lat <= 60 && lng >= -140 && lng <= -60) ||
-          (lat >= 60 && lat <= 70 && lng >= -170 && lng <= -60)
-        )
-        if (ok) landDots.push([lat, lng])
-      }
-    }
-
-    // South America
-    for (let lat = -55; lat <= 12; lat += 3.5) {
-      for (let lng = -80; lng <= -34; lng += 3.5) {
-        const ok = (
-          (lat >= -55 && lat <= -40 && lng >= -75 && lng <= -62) ||
-          (lat >= -40 && lat <= -20 && lng >= -72 && lng <= -40) ||
-          (lat >= -20 && lat <= 0  && lng >= -80 && lng <= -34) ||
-          (lat >= 0   && lat <= 12 && lng >= -78 && lng <= -58)
-        )
-        if (ok) landDots.push([lat, lng])
-      }
-    }
-
-    // Australia
-    for (let lat = -40; lat <= -10; lat += 3.5) {
-      for (let lng = 113; lng <= 154; lng += 3.5) {
-        const ok = (
-          (lat >= -40 && lat <= -30 && lng >= 116 && lng <= 150) ||
-          (lat >= -30 && lat <= -20 && lng >= 113 && lng <= 154) ||
-          (lat >= -20 && lat <= -10 && lng >= 122 && lng <= 145)
-        )
-        if (ok) landDots.push([lat, lng])
-      }
-    }
-
     function draw() {
       c.clearRect(0, 0, S, S)
       const rot = rotRef.current
@@ -123,17 +110,17 @@ export default function Globe() {
       c.fillStyle = glow
       c.fill()
 
-      // Globe base — light blue-white ocean
-      const ocean = c.createRadialGradient(cx - R * 0.25, cy - R * 0.25, R * 0.05, cx, cy, R)
-      ocean.addColorStop(0, '#e8eef8')
-      ocean.addColorStop(0.5, '#d4ddf0')
-      ocean.addColorStop(1, '#c2cfe8')
+      // Globe ocean base
+      const ocean = c.createRadialGradient(cx - R * 0.25, cy - R * 0.28, R * 0.05, cx, cy, R)
+      ocean.addColorStop(0, '#e4ecf8')
+      ocean.addColorStop(0.5, '#cfdaef')
+      ocean.addColorStop(1, '#bccae6')
       c.beginPath()
       c.arc(cx, cy, R, 0, Math.PI * 2)
       c.fillStyle = ocean
       c.fill()
 
-      // Latitude grid lines
+      // Grid lines
       for (let lat = -60; lat <= 60; lat += 30) {
         const phi = (lat * Math.PI) / 180
         const ry = R * Math.cos(phi)
@@ -141,12 +128,10 @@ export default function Globe() {
         if (ry < 1) continue
         c.beginPath()
         c.ellipse(cx, yp, ry, ry * 0.12, 0, 0, Math.PI * 2)
-        c.strokeStyle = 'rgba(41,63,148,0.12)'
+        c.strokeStyle = 'rgba(41,63,148,0.1)'
         c.lineWidth = 0.6
         c.stroke()
       }
-
-      // Longitude grid lines
       for (let i = 0; i < 12; i++) {
         const lng = (360 / 12) * i
         c.beginPath()
@@ -157,34 +142,57 @@ export default function Globe() {
           if (!started) { c.moveTo(x, y); started = true }
           else c.lineTo(x, y)
         }
-        c.strokeStyle = 'rgba(41,63,148,0.12)'
+        c.strokeStyle = 'rgba(41,63,148,0.1)'
         c.lineWidth = 0.6
         c.stroke()
       }
 
-      // Land dots
-      landDots.forEach(([lat, lng]) => {
-        const { x, y, z } = project(lat, lng, rot)
-        if (z < 0.04) return
+      // Clip to globe
+      c.save()
+      c.beginPath()
+      c.arc(cx, cy, R, 0, Math.PI * 2)
+      c.clip()
 
-        const brightness = 0.5 + z * 0.5
-        const size = 2.5 + z * 1.5
+      // Draw continents
+      CONTINENTS.forEach((continent) => {
+        // Check if continent is mostly visible
+        let visibleCount = 0
+        continent.forEach(([lat, lng]) => {
+          const { z } = project(lat, lng, rot)
+          if (z > 0) visibleCount++
+        })
+        if (visibleCount < 3) return
 
-        // Soft glow behind dot
-        const dg = c.createRadialGradient(x, y, 0, x, y, size * 3)
-        dg.addColorStop(0, `rgba(41,63,148,${brightness * 0.2})`)
-        dg.addColorStop(1, 'transparent')
         c.beginPath()
-        c.arc(x, y, size * 3, 0, Math.PI * 2)
-        c.fillStyle = dg
-        c.fill()
+        let started = false
+        continent.forEach(([lat, lng]) => {
+          const { x, y, z } = project(lat, lng, rot)
+          if (z < -0.1) {
+            started = false
+            return
+          }
+          if (!started) {
+            c.moveTo(x, y)
+            started = true
+          } else {
+            c.lineTo(x, y)
+          }
+        })
+        c.closePath()
 
-        // Dot
-        c.beginPath()
-        c.arc(x, y, size, 0, Math.PI * 2)
-        c.fillStyle = `rgba(41,63,148,${brightness})`
+        // Land gradient
+        const grad = c.createLinearGradient(cx - R, cy - R, cx + R, cy + R)
+        grad.addColorStop(0, 'rgba(41,63,148,0.75)')
+        grad.addColorStop(0.5, 'rgba(41,63,148,0.6)')
+        grad.addColorStop(1, 'rgba(30,50,120,0.7)')
+        c.fillStyle = grad
         c.fill()
+        c.strokeStyle = 'rgba(255,255,255,0.4)'
+        c.lineWidth = 0.8
+        c.stroke()
       })
+
+      c.restore()
 
       // South Africa pulse dot
       const sa = project(-29, 25, rot)
@@ -192,7 +200,7 @@ export default function Globe() {
         for (let r = 1; r <= 3; r++) {
           c.beginPath()
           c.arc(sa.x, sa.y, r * 9, 0, Math.PI * 2)
-          c.strokeStyle = `rgba(41,63,148,${0.35 / r})`
+          c.strokeStyle = `rgba(41,63,148,${0.4 / r})`
           c.lineWidth = 1
           c.stroke()
         }
@@ -206,26 +214,23 @@ export default function Globe() {
         c.fill()
       }
 
-      // Night side shadow
+      // Night shadow
       c.save()
       c.beginPath()
       c.arc(cx, cy, R, 0, Math.PI * 2)
       c.clip()
       const night = c.createLinearGradient(cx - R, cy, cx + R, cy)
-      night.addColorStop(0, 'rgba(12,28,56,0.18)')
-      night.addColorStop(0.4, 'transparent')
-      night.addColorStop(0.6, 'transparent')
-      night.addColorStop(1, 'rgba(12,28,56,0.22)')
+      night.addColorStop(0, 'rgba(12,28,56,0.15)')
+      night.addColorStop(0.35, 'transparent')
+      night.addColorStop(0.65, 'transparent')
+      night.addColorStop(1, 'rgba(12,28,56,0.2)')
       c.fillStyle = night
       c.fillRect(cx - R, cy - R, R * 2, R * 2)
       c.restore()
 
-      // Specular
-      const spec = c.createRadialGradient(
-        cx - R * 0.32, cy - R * 0.35, 0,
-        cx - R * 0.32, cy - R * 0.35, R * 0.5
-      )
-      spec.addColorStop(0, 'rgba(255,255,255,0.28)')
+      // Specular highlight
+      const spec = c.createRadialGradient(cx - R * 0.32, cy - R * 0.35, 0, cx - R * 0.32, cy - R * 0.35, R * 0.5)
+      spec.addColorStop(0, 'rgba(255,255,255,0.3)')
       spec.addColorStop(0.5, 'rgba(255,255,255,0.08)')
       spec.addColorStop(1, 'transparent')
       c.beginPath()
@@ -234,9 +239,9 @@ export default function Globe() {
       c.fill()
 
       // Atmosphere rim
-      const rim = c.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.08)
+      const rim = c.createRadialGradient(cx, cy, R * 0.88, cx, cy, R * 1.08)
       rim.addColorStop(0, 'transparent')
-      rim.addColorStop(1, 'rgba(41,63,148,0.22)')
+      rim.addColorStop(1, 'rgba(41,63,148,0.2)')
       c.beginPath()
       c.arc(cx, cy, R * 1.08, 0, Math.PI * 2)
       c.fillStyle = rim
