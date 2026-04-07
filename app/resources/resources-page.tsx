@@ -82,7 +82,7 @@ export default function ResourcesPage() {
       <section style={{ background: 'var(--warm)' }}>
         <div className="res-grid">
           {resources.map((r: Resource, i: number) => (
-            
+            <a
               href={r.href}
               className="res-card"
               key={i}
