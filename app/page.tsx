@@ -13,32 +13,210 @@ const SECTORS: { id: Sector; label: string }[] = [
   { id: 'civil', label: 'Civil Society' },
 ]
 
-function JourneySVG({ id, labels }: { id: string; labels: string[][] }) {
+function JourneyWheel({ labels, activeIdx, onSelect }: {
+  labels: string[][]
+  activeIdx: number
+  onSelect: (i: number) => void
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const rafRef = useRef<number>(0)
+  const rotRef = useRef(0)
+  const hoveredRef = useRef<number>(-1)
+  const activeIdxRef = useRef(activeIdx)
+
+  useEffect(() => { activeIdxRef.current = activeIdx }, [activeIdx])
+
+  const nodePositions = [
+    { angle: -Math.PI / 2 },
+    { angle: 0 },
+    { angle: Math.PI / 2 },
+    { angle: Math.PI },
+  ]
+
+  const nodeLabels = [
+    ['01', 'Audit &', 'Assess'],
+    ['02', 'Governance', 'Framework'],
+    ['03', 'Navigator', 'Benchmark'],
+    ['04', 'Ongoing', 'Advisory'],
+  ]
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const S = 420
+    canvas.width = S
+    canvas.height = S
+    const cx = S / 2, cy = S / 2, R = 148, nr = 38
+
+    function draw() {
+      ctx.clearRect(0, 0, S, S)
+
+      // Outer dashed ring
+      ctx.beginPath()
+      ctx.arc(cx, cy, R, 0, Math.PI * 2)
+      ctx.strokeStyle = 'rgba(41,63,148,0.12)'
+      ctx.lineWidth = 1
+      ctx.setLineDash([4, 8])
+      ctx.stroke()
+      ctx.setLineDash([])
+
+      // Inner ring
+      ctx.beginPath()
+      ctx.arc(cx, cy, R * 0.55, 0, Math.PI * 2)
+      ctx.strokeStyle = 'rgba(41,63,148,0.06)'
+      ctx.lineWidth = 1
+      ctx.stroke()
+
+      // Connector lines between nodes
+      nodePositions.forEach(({ angle }, i) => {
+        const next = nodePositions[(i + 1) % 4]
+        const x1 = cx + R * Math.cos(angle)
+        const y1 = cy + R * Math.sin(angle)
+        const x2 = cx + R * Math.cos(next.angle)
+        const y2 = cy + R * Math.sin(next.angle)
+        ctx.beginPath()
+        ctx.moveTo(x1, y1)
+        ctx.lineTo(x2, y2)
+        ctx.strokeStyle = 'rgba(41,63,148,0.08)'
+        ctx.lineWidth = 1
+        ctx.stroke()
+      })
+
+      // Rotating arc highlight
+      const arc = rotRef.current
+      ctx.beginPath()
+      ctx.arc(cx, cy, R, arc, arc + Math.PI * 1.6)
+      ctx.strokeStyle = '#293F94'
+      ctx.lineWidth = 2.5
+      ctx.lineCap = 'round'
+      ctx.stroke()
+
+      // Arrow head on rotating arc
+      const arrowAngle = arc + Math.PI * 1.6
+      const ax = cx + R * Math.cos(arrowAngle)
+      const ay = cy + R * Math.sin(arrowAngle)
+      const ta = arrowAngle + Math.PI / 2
+      ctx.beginPath()
+      ctx.moveTo(ax + 8 * Math.cos(ta - 0.5), ay + 8 * Math.sin(ta - 0.5))
+      ctx.lineTo(ax, ay)
+      ctx.lineTo(ax + 8 * Math.cos(ta + 0.5), ay + 8 * Math.sin(ta + 0.5))
+      ctx.strokeStyle = '#293F94'
+      ctx.lineWidth = 2
+      ctx.lineCap = 'round'
+      ctx.stroke()
+
+      // Nodes
+      nodePositions.forEach(({ angle }, i) => {
+        const nx = cx + R * Math.cos(angle)
+        const ny = cy + R * Math.sin(angle)
+        const isActive = i === activeIdxRef.current
+        const isHovered = i === hoveredRef.current
+
+        // Outer glow for active
+        if (isActive) {
+          const grd = ctx.createRadialGradient(nx, ny, nr * 0.5, nx, ny, nr + 18)
+          grd.addColorStop(0, 'rgba(41,63,148,0.18)')
+          grd.addColorStop(1, 'rgba(41,63,148,0)')
+          ctx.beginPath()
+          ctx.arc(nx, ny, nr + 18, 0, Math.PI * 2)
+          ctx.fillStyle = grd
+          ctx.fill()
+        }
+
+        // Node fill
+        ctx.beginPath()
+        ctx.arc(nx, ny, nr, 0, Math.PI * 2)
+        ctx.fillStyle = isActive
+          ? 'rgba(41,63,148,0.22)'
+          : isHovered
+          ? 'rgba(41,63,148,0.14)'
+          : 'rgba(41,63,148,0.05)'
+        ctx.fill()
+
+        // Node border
+        ctx.strokeStyle = isActive ? '#293F94' : isHovered ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.22)'
+        ctx.lineWidth = isActive ? 2 : 1
+        ctx.stroke()
+
+        // Step number
+        ctx.fillStyle = isActive ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.25)'
+        ctx.font = `500 9px Outfit, sans-serif`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText(nodeLabels[i][0], nx, ny - 14)
+
+        // Label lines
+        ctx.fillStyle = isActive ? '#293F94' : 'rgba(41,63,148,0.55)'
+        ctx.font = `600 10px Outfit, sans-serif`
+        ctx.fillText(nodeLabels[i][1], nx, ny - 2)
+        ctx.fillText(nodeLabels[i][2], nx, ny + 11)
+      })
+
+      // Centre circle
+      const cGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, 52)
+      cGrd.addColorStop(0, 'rgba(41,63,148,0.14)')
+      cGrd.addColorStop(1, 'rgba(41,63,148,0.04)')
+      ctx.beginPath()
+      ctx.arc(cx, cy, 52, 0, Math.PI * 2)
+      ctx.fillStyle = cGrd
+      ctx.fill()
+      ctx.strokeStyle = 'rgba(41,63,148,0.2)'
+      ctx.lineWidth = 1
+      ctx.stroke()
+
+      // Centre text
+      ctx.fillStyle = 'rgba(41,63,148,0.8)'
+      ctx.font = 'italic 13px Cormorant Garamond, Georgia, serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText('Your', cx, cy - 8)
+      ctx.fillText('journey', cx, cy + 8)
+
+      rotRef.current = (rotRef.current + 0.004) % (Math.PI * 2)
+      rafRef.current = requestAnimationFrame(draw)
+    }
+
+    rafRef.current = requestAnimationFrame(draw)
+    return () => cancelAnimationFrame(rafRef.current)
+  }, [])
+
+  function getHitNode(e: React.MouseEvent<HTMLCanvasElement>) {
+    const canvas = canvasRef.current
+    if (!canvas) return -1
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = 420 / rect.width
+    const scaleY = 420 / rect.height
+    const mx = (e.clientX - rect.left) * scaleX
+    const my = (e.clientY - rect.top) * scaleY
+    const cx = 210, cy = 210, R = 148, nr = 38
+    for (let i = 0; i < 4; i++) {
+      const nx = cx + R * Math.cos(nodePositions[i].angle)
+      const ny = cy + R * Math.sin(nodePositions[i].angle)
+      const dx = mx - nx, dy = my - ny
+      if (Math.sqrt(dx * dx + dy * dy) < nr + 10) return i
+    }
+    return -1
+  }
+
   return (
-    <svg className="journey-svg" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg" id={id}>
-      <circle cx="210" cy="210" r="130" stroke="rgba(143,217,192,0.15)" strokeWidth="1" strokeDasharray="4 6"/>
-      <circle cx="210" cy="210" r="90" stroke="rgba(143,217,192,0.08)" strokeWidth="1"/>
-      <path d="M210 80 A130 130 0 0 1 340 210" stroke="#293F94" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
-      <path d="M340 210 A130 130 0 0 1 210 340" stroke="rgba(41,63,148,0.35)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-      <path d="M210 340 A130 130 0 0 1 80 210" stroke="rgba(41,63,148,0.35)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-      <path d="M80 210 A130 130 0 0 1 210 80" stroke="rgba(41,63,148,0.35)" strokeWidth="2" fill="none" strokeLinecap="round"/>
-      <polygon points="340,200 348,210 340,220" fill="#293F94" opacity="0.7"/>
-      <circle cx="210" cy="80" r="28" fill="rgba(41,63,148,0.18)" stroke="#293F94" strokeWidth="1.5"/>
-      <circle cx="340" cy="210" r="28" fill="rgba(41,63,148,0.08)" stroke="rgba(41,63,148,0.35)" strokeWidth="1"/>
-      <circle cx="210" cy="340" r="28" fill="rgba(41,63,148,0.08)" stroke="rgba(41,63,148,0.35)" strokeWidth="1"/>
-      <circle cx="80" cy="210" r="28" fill="rgba(41,63,148,0.08)" stroke="rgba(41,63,148,0.35)" strokeWidth="1"/>
-      <text x="210" y="74" textAnchor="middle" fill="#293F94" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[0][0]}</text>
-      <text x="210" y="85" textAnchor="middle" fill="#293F94" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[0][1]}</text>
-      <text x="340" y="205" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[1][0]}</text>
-      <text x="340" y="216" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[1][1]}</text>
-      <text x="210" y="334" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[2][0]}</text>
-      <text x="210" y="345" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[2][1]}</text>
-      <text x="80" y="205" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[3][0]}</text>
-      <text x="80" y="216" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[3][1]}</text>
-      <circle cx="210" cy="210" r="46" fill="rgba(41,63,148,0.1)" stroke="rgba(41,63,148,0.2)" strokeWidth="1"/>
-      <text x="210" y="205" textAnchor="middle" fill="rgba(41,63,148,0.8)" fontSize="10" fontFamily="Cormorant Garamond,serif" fontStyle="italic">Your</text>
-      <text x="210" y="220" textAnchor="middle" fill="rgba(41,63,148,0.8)" fontSize="10" fontFamily="Cormorant Garamond,serif" fontStyle="italic">journey</text>
-    </svg>
+    <div style={{ position: 'relative', width: '100%', maxWidth: 420, margin: '0 auto' }}>
+      <canvas
+        ref={canvasRef}
+        style={{ width: '100%', height: 'auto', display: 'block', cursor: 'pointer' }}
+        onClick={(e) => { const i = getHitNode(e); if (i >= 0) onSelect(i) }}
+        onMouseMove={(e) => { hoveredRef.current = getHitNode(e) }}
+        onMouseLeave={() => { hoveredRef.current = -1 }}
+      />
+      <div style={{
+        position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
+        fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em',
+        textTransform: 'uppercase', whiteSpace: 'nowrap',
+      }}>
+        Click a node to explore
+      </div>
+    </div>
   )
 }
 
@@ -53,7 +231,7 @@ const sectorData = {
       { label: 'The trust deficit', text: 'When customers cannot understand why a decision was made about them, trust erodes and regulators notice before you do.' },
     ],
     journeyTitle: 'From AI risk exposure to a governance posture you can stand behind',
-    journeySubtitle: 'You can enter this process at any point. The circle never closes because responsible AI is an ongoing practice, not a project.',
+    journeySubtitle: 'Click any node to explore each step. The circle never closes — responsible AI is ongoing.',
     svgLabels: [['AUDIT', '&'], ['GOV.', 'FRMWK'], ['NAVIG', 'ATOR'], ['ONGO', 'ING']],
     cards: [
       { title: 'Algorithmic audit', body: 'We assess your AI systems across people, processes, and technology, not just the model. You receive findings your board can act on and your risk committee can file with confidence.' },
@@ -72,7 +250,7 @@ const sectorData = {
       { label: 'The consent challenge', text: 'Patients have a right to understand how their data is used and how decisions about their care are made. Few health AI systems currently support this meaningfully.' },
     ],
     journeyTitle: 'From AI deployment risk to clinically trustworthy systems',
-    journeySubtitle: 'Entry at any point. The work is continuous because clinical AI evolves continuously.',
+    journeySubtitle: 'Click any node to explore each step. Entry at any point — the work is continuous.',
     svgLabels: [['CLINICAL', 'AUDIT'], ['ETHICS', 'FRMWK'], ['PATIENT', 'RIGHTS'], ['ONGO', 'ING']],
     cards: [
       { title: 'Clinical AI audit', body: 'We assess diagnostic and decision-support tools for bias, data quality, and clinical safety across the people using them, the processes governing them, and the technology itself.' },
@@ -91,7 +269,7 @@ const sectorData = {
       { label: 'The rights exposure', text: 'Government AI systems touching social grants, policing, or access to services carry constitutional rights implications. Most have not been assessed for these risks.' },
     ],
     journeyTitle: 'From procurement risk to accountable public AI',
-    journeySubtitle: 'Democratic accountability for AI requires ongoing oversight, not a once-off review.',
+    journeySubtitle: 'Click any node to explore each step. Democratic accountability requires ongoing oversight.',
     svgLabels: [['ASSESS', 'MENT'], ['GOV.', 'POLICY'], ['CITIZEN', 'RIGHTS'], ['ONGO', 'ING']],
     cards: [
       { title: 'AI procurement assessment', body: 'We assess AI systems before or after procurement for bias, accountability gaps, and rights implications, giving public institutions the independent technical view they need.' },
@@ -110,7 +288,7 @@ const sectorData = {
       { label: 'The community disconnect', text: 'AI governance debates happen at a remove from the communities most affected. Authentic community voice requires structured mechanisms, not just consultation.' },
     ],
     journeyTitle: 'From documentation to structural AI accountability',
-    journeySubtitle: 'Durable change requires building the field, not just fighting fires. We are in it for the long term.',
+    journeySubtitle: 'Click any node to explore each step. Durable change requires building the field long term.',
     svgLabels: [['EVID', 'ENCE'], ['POLICY', 'ENGAGE'], ['COMM.', 'VOICE'], ['ONGO', 'ING']],
     cards: [
       { title: 'AI harm documentation', body: 'We provide the technical assessment capability that transforms community harm reports into evidenced, credible documentation that can drive accountability.' },
@@ -141,7 +319,7 @@ export default function Home() {
     if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el)
   }
 
-return (
+  return (
     <>
       {/* HERO */}
       <section className="hero hero-split">
@@ -150,7 +328,7 @@ return (
         <div className="hero-split-inner">
           <div className="hero-text">
             <div className="african-badge">Black African-owned and led</div>
-            <div className="hero-tag">Ethical AI · South Africa · </div>
+            <div className="hero-tag">South Africa</div>
             <h1>AI that serves <em>people</em><br />and planet</h1>
             <p className="hero-sub">
               AlgoViva helps organisations in financial services, health, government, and civil society build AI systems that are trustworthy, accountable, and genuinely fit for the African context. We bring the expertise. We carry the values. We have skin in the game.
@@ -161,7 +339,9 @@ return (
             </div>
             <div className="hero-footer">
               <span className="hero-footer-label">Recognised by</span>
-              <a href="/ai_governance_vendor_report_2026-2.pdf" target="_blank" rel="noopener noreferrer" className="iapp-pill">IAPP 2026 AI Governance Vendor Report · All four vendor categories ↗</a>
+              <a href="/ai_governance_vendor_report_2026-2.pdf" target="_blank" rel="noopener noreferrer" className="iapp-pill">
+                IAPP 2026 AI Governance Vendor Report · All four vendor categories ↗
+              </a>
             </div>
           </div>
           <div className="hero-globe-wrap">
@@ -221,7 +401,11 @@ return (
                 </div>
                 <div className="journey-layout">
                   <div className="journey-circle-wrap">
-                    <JourneySVG id={`j-svg-${s.id}`} labels={d.svgLabels} />
+                    <JourneyWheel
+                      labels={d.svgLabels}
+                      activeIdx={activeIdx}
+                      onSelect={(i) => setActiveCards((prev) => ({ ...prev, [s.id]: i }))}
+                    />
                   </div>
                   <div className="journey-cards">
                     {d.cards.map((card, i) => (
@@ -374,7 +558,7 @@ return (
           <h2 className="section-title">The only African AI<br />governance benchmark</h2>
           <p className="section-body" style={{ maxWidth: 480 }}>Navigator is our assessment platform. Every engagement generates anonymised benchmark data, building the only African AI governance benchmark in existence. See where you stand. Know what to do next.</p>
           <br /><br />
-          <Link href="/navigator" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 13, fontWeight: 500, color: 'var(--brand)', textDecoration: 'none', borderBottom: '1px solid rgba(41,63,148,0.35)', paddingBottom: 2 }}>
+          <Link href="/navigator" className="sec-cta">
             Request Navigator access →
           </Link>
         </div>
