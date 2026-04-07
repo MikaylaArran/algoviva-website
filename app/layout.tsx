@@ -22,6 +22,10 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: { default: 'AlgoViva — Ethical AI for Africa', template: '%s | AlgoViva' },
   description: 'AlgoViva helps organisations in financial services, health, government, and civil society build AI systems that are trustworthy, accountable, and fit for the African context.',
+  icons: {
+    icon: '/Algoviva_Blue_A.png',
+    apple: '/Algoviva_Blue_A.png',
+  },
   openGraph: {
     title: 'AlgoViva — Ethical AI for Africa',
     description: 'For the life of people and planet.',
