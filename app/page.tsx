@@ -45,29 +45,30 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+    const c = ctx
     const S = 420
     canvas.width = S
     canvas.height = S
     const cx = S / 2, cy = S / 2, R = 148, nr = 38
 
     function draw() {
-      ctx.clearRect(0, 0, S, S)
+      c.clearRect(0, 0, S, S)
 
       // Outer dashed ring
-      ctx.beginPath()
-      ctx.arc(cx, cy, R, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(41,63,148,0.12)'
-      ctx.lineWidth = 1
-      ctx.setLineDash([4, 8])
-      ctx.stroke()
-      ctx.setLineDash([])
+      c.beginPath()
+      c.arc(cx, cy, R, 0, Math.PI * 2)
+      c.strokeStyle = 'rgba(41,63,148,0.12)'
+      c.lineWidth = 1
+      c.setLineDash([4, 8])
+      c.stroke()
+      c.setLineDash([])
 
       // Inner ring
-      ctx.beginPath()
-      ctx.arc(cx, cy, R * 0.55, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(41,63,148,0.06)'
-      ctx.lineWidth = 1
-      ctx.stroke()
+      c.beginPath()
+      c.arc(cx, cy, R * 0.55, 0, Math.PI * 2)
+      c.strokeStyle = 'rgba(41,63,148,0.06)'
+      c.lineWidth = 1
+      c.stroke()
 
       // Connector lines between nodes
       nodePositions.forEach(({ angle }, i) => {
@@ -76,36 +77,36 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
         const y1 = cy + R * Math.sin(angle)
         const x2 = cx + R * Math.cos(next.angle)
         const y2 = cy + R * Math.sin(next.angle)
-        ctx.beginPath()
-        ctx.moveTo(x1, y1)
-        ctx.lineTo(x2, y2)
-        ctx.strokeStyle = 'rgba(41,63,148,0.08)'
-        ctx.lineWidth = 1
-        ctx.stroke()
+        c.beginPath()
+        c.moveTo(x1, y1)
+        c.lineTo(x2, y2)
+        c.strokeStyle = 'rgba(41,63,148,0.08)'
+        c.lineWidth = 1
+        c.stroke()
       })
 
       // Rotating arc highlight
       const arc = rotRef.current
-      ctx.beginPath()
-      ctx.arc(cx, cy, R, arc, arc + Math.PI * 1.6)
-      ctx.strokeStyle = '#293F94'
-      ctx.lineWidth = 2.5
-      ctx.lineCap = 'round'
-      ctx.stroke()
+      c.beginPath()
+      c.arc(cx, cy, R, arc, arc + Math.PI * 1.6)
+      c.strokeStyle = '#293F94'
+      c.lineWidth = 2.5
+      c.lineCap = 'round'
+      c.stroke()
 
       // Arrow head on rotating arc
       const arrowAngle = arc + Math.PI * 1.6
       const ax = cx + R * Math.cos(arrowAngle)
       const ay = cy + R * Math.sin(arrowAngle)
       const ta = arrowAngle + Math.PI / 2
-      ctx.beginPath()
-      ctx.moveTo(ax + 8 * Math.cos(ta - 0.5), ay + 8 * Math.sin(ta - 0.5))
-      ctx.lineTo(ax, ay)
-      ctx.lineTo(ax + 8 * Math.cos(ta + 0.5), ay + 8 * Math.sin(ta + 0.5))
-      ctx.strokeStyle = '#293F94'
-      ctx.lineWidth = 2
-      ctx.lineCap = 'round'
-      ctx.stroke()
+      c.beginPath()
+      c.moveTo(ax + 8 * Math.cos(ta - 0.5), ay + 8 * Math.sin(ta - 0.5))
+      c.lineTo(ax, ay)
+      c.lineTo(ax + 8 * Math.cos(ta + 0.5), ay + 8 * Math.sin(ta + 0.5))
+      c.strokeStyle = '#293F94'
+      c.lineWidth = 2
+      c.lineCap = 'round'
+      c.stroke()
 
       // Nodes
       nodePositions.forEach(({ angle }, i) => {
@@ -116,63 +117,63 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
 
         // Outer glow for active
         if (isActive) {
-          const grd = ctx.createRadialGradient(nx, ny, nr * 0.5, nx, ny, nr + 18)
+          const grd = c.createRadialGradient(nx, ny, nr * 0.5, nx, ny, nr + 18)
           grd.addColorStop(0, 'rgba(41,63,148,0.18)')
           grd.addColorStop(1, 'rgba(41,63,148,0)')
-          ctx.beginPath()
-          ctx.arc(nx, ny, nr + 18, 0, Math.PI * 2)
-          ctx.fillStyle = grd
-          ctx.fill()
+          c.beginPath()
+          c.arc(nx, ny, nr + 18, 0, Math.PI * 2)
+          c.fillStyle = grd
+          c.fill()
         }
 
         // Node fill
-        ctx.beginPath()
-        ctx.arc(nx, ny, nr, 0, Math.PI * 2)
-        ctx.fillStyle = isActive
+        c.beginPath()
+        c.arc(nx, ny, nr, 0, Math.PI * 2)
+        c.fillStyle = isActive
           ? 'rgba(41,63,148,0.22)'
           : isHovered
           ? 'rgba(41,63,148,0.14)'
           : 'rgba(41,63,148,0.05)'
-        ctx.fill()
+        c.fill()
 
         // Node border
-        ctx.strokeStyle = isActive ? '#293F94' : isHovered ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.22)'
-        ctx.lineWidth = isActive ? 2 : 1
-        ctx.stroke()
+        c.strokeStyle = isActive ? '#293F94' : isHovered ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.22)'
+        c.lineWidth = isActive ? 2 : 1
+        c.stroke()
 
         // Step number
-        ctx.fillStyle = isActive ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.25)'
-        ctx.font = `500 9px Outfit, sans-serif`
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillText(nodeLabels[i][0], nx, ny - 14)
+        c.fillStyle = isActive ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.25)'
+        c.font = `500 9px Outfit, sans-serif`
+        c.textAlign = 'center'
+        c.textBaseline = 'middle'
+        c.fillText(nodeLabels[i][0], nx, ny - 14)
 
         // Label lines
-        ctx.fillStyle = isActive ? '#293F94' : 'rgba(41,63,148,0.55)'
-        ctx.font = `600 10px Outfit, sans-serif`
-        ctx.fillText(nodeLabels[i][1], nx, ny - 2)
-        ctx.fillText(nodeLabels[i][2], nx, ny + 11)
+        c.fillStyle = isActive ? '#293F94' : 'rgba(41,63,148,0.55)'
+        c.font = `600 10px Outfit, sans-serif`
+        c.fillText(nodeLabels[i][1], nx, ny - 2)
+        c.fillText(nodeLabels[i][2], nx, ny + 11)
       })
 
       // Centre circle
-      const cGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, 52)
+      const cGrd = c.createRadialGradient(cx, cy, 0, cx, cy, 52)
       cGrd.addColorStop(0, 'rgba(41,63,148,0.14)')
       cGrd.addColorStop(1, 'rgba(41,63,148,0.04)')
-      ctx.beginPath()
-      ctx.arc(cx, cy, 52, 0, Math.PI * 2)
-      ctx.fillStyle = cGrd
-      ctx.fill()
-      ctx.strokeStyle = 'rgba(41,63,148,0.2)'
-      ctx.lineWidth = 1
-      ctx.stroke()
+      c.beginPath()
+      c.arc(cx, cy, 52, 0, Math.PI * 2)
+      c.fillStyle = cGrd
+      c.fill()
+      c.strokeStyle = 'rgba(41,63,148,0.2)'
+      c.lineWidth = 1
+      c.stroke()
 
       // Centre text
-      ctx.fillStyle = 'rgba(41,63,148,0.8)'
-      ctx.font = 'italic 13px Cormorant Garamond, Georgia, serif'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-      ctx.fillText('Your', cx, cy - 8)
-      ctx.fillText('journey', cx, cy + 8)
+      c.fillStyle = 'rgba(41,63,148,0.8)'
+      c.font = 'italic 13px Cormorant Garamond, Georgia, serif'
+      c.textAlign = 'center'
+      c.textBaseline = 'middle'
+      c.fillText('Your', cx, cy - 8)
+      c.fillText('journey', cx, cy + 8)
 
       rotRef.current = (rotRef.current + 0.004) % (Math.PI * 2)
       rafRef.current = requestAnimationFrame(draw)
