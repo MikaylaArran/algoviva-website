@@ -13,7 +13,7 @@ const SECTORS: { id: Sector; label: string }[] = [
   { id: 'civil', label: 'Civil Society' },
 ]
 
-function JourneyWheel({ activeIdx, onSelect }: {
+function JourneyWheel({ labels, activeIdx, onSelect }: {
   labels: string[][]
   activeIdx: number
   onSelect: (i: number) => void
@@ -23,19 +23,21 @@ function JourneyWheel({ activeIdx, onSelect }: {
   const rotRef = useRef(0)
   const hoveredRef = useRef<number>(-1)
   const activeRef = useRef(activeIdx)
+  const labelsRef = useRef(labels)
 
   useEffect(() => { activeRef.current = activeIdx }, [activeIdx])
+  useEffect(() => { labelsRef.current = labels }, [labels])
 
   const R = 150
   const NR = 42
   const CX = 210
   const CY = 210
 
-  const nodes = [
-    { angle: -Math.PI / 2, label: ['Audit &', 'Assess'], num: '01' },
-    { angle: 0,            label: ['Governance', 'Framework'], num: '02' },
-    { angle: Math.PI / 2,  label: ['Navigator', 'Benchmark'], num: '03' },
-    { angle: Math.PI,      label: ['Ongoing', 'Advisory'], num: '04' },
+  const nodeAngles = [
+    -Math.PI / 2,
+    0,
+    Math.PI / 2,
+    Math.PI,
   ]
 
   useEffect(() => {
@@ -43,16 +45,15 @@ function JourneyWheel({ activeIdx, onSelect }: {
     if (!canvas) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
+    const c: CanvasRenderingContext2D = ctx
 
     canvas.width = 420
     canvas.height = 420
 
-    const c: CanvasRenderingContext2D = ctx
-
     function draw() {
       c.clearRect(0, 0, 420, 420)
 
-      // Background subtle glow in centre
+      // Background glow
       const bg = c.createRadialGradient(CX, CY, 0, CX, CY, R + 40)
       bg.addColorStop(0, 'rgba(41,63,148,0.06)')
       bg.addColorStop(1, 'rgba(0,0,0,0)')
@@ -61,7 +62,7 @@ function JourneyWheel({ activeIdx, onSelect }: {
       c.fillStyle = bg
       c.fill()
 
-      // Dashed ring
+      // Full dashed ring
       c.save()
       c.beginPath()
       c.arc(CX, CY, R, 0, Math.PI * 2)
@@ -71,21 +72,34 @@ function JourneyWheel({ activeIdx, onSelect }: {
       c.stroke()
       c.restore()
 
-      // Animated arc — bright rotating highlight
+      // Animated glowing arc (full circle overlay)
       const a = rotRef.current
       c.save()
       c.beginPath()
       c.arc(CX, CY, R, a, a + Math.PI * 2)
       c.strokeStyle = '#4060c8'
-      c.lineWidth = 3
+      c.lineWidth = 2.5
       c.lineCap = 'round'
       c.shadowColor = '#293F94'
-      c.shadowBlur = 12
+      c.shadowBlur = 14
+      c.globalAlpha = 0.5
+      c.stroke()
+      c.restore()
+
+      // Bright highlight arc (shorter, fast-moving)
+      c.save()
+      c.beginPath()
+      c.arc(CX, CY, R, a, a + Math.PI * 0.4)
+      c.strokeStyle = '#7090ff'
+      c.lineWidth = 3
+      c.lineCap = 'round'
+      c.shadowColor = '#5575d8'
+      c.shadowBlur = 18
       c.stroke()
       c.restore()
 
       // Arrowhead
-      const tip = a + Math.PI * 2
+      const tip = a + Math.PI * 0.4
       const tx = CX + R * Math.cos(tip)
       const ty = CY + R * Math.sin(tip)
       const perp = tip + Math.PI / 2
@@ -94,23 +108,23 @@ function JourneyWheel({ activeIdx, onSelect }: {
       c.moveTo(tx + 9 * Math.cos(perp - 0.45), ty + 9 * Math.sin(perp - 0.45))
       c.lineTo(tx, ty)
       c.lineTo(tx + 9 * Math.cos(perp + 0.45), ty + 9 * Math.sin(perp + 0.45))
-      c.strokeStyle = '#4060c8'
+      c.strokeStyle = '#7090ff'
       c.lineWidth = 2.5
       c.lineCap = 'round'
-      c.shadowColor = '#293F94'
+      c.shadowColor = '#5575d8'
       c.shadowBlur = 10
       c.stroke()
       c.restore()
 
       // Spoke lines
-      nodes.forEach(({ angle }) => {
+      nodeAngles.forEach((angle) => {
         const nx = CX + R * Math.cos(angle)
         const ny = CY + R * Math.sin(angle)
-        const ix = CX + 54 * Math.cos(angle)
-        const iy = CY + 54 * Math.sin(angle)
+        const ix = CX + 56 * Math.cos(angle)
+        const iy = CY + 56 * Math.sin(angle)
         c.beginPath()
         c.moveTo(ix, iy)
-        c.lineTo(nx - NR * 0.9 * Math.cos(angle), ny - NR * 0.9 * Math.sin(angle))
+        c.lineTo(nx - NR * 0.95 * Math.cos(angle), ny - NR * 0.95 * Math.sin(angle))
         c.strokeStyle = 'rgba(41,63,148,0.12)'
         c.lineWidth = 1
         c.setLineDash([])
@@ -118,19 +132,21 @@ function JourneyWheel({ activeIdx, onSelect }: {
       })
 
       // Nodes
-      nodes.forEach(({ angle, label, num }, i) => {
+      nodeAngles.forEach((angle, i) => {
         const nx = CX + R * Math.cos(angle)
         const ny = CY + R * Math.sin(angle)
         const isActive = i === activeRef.current
         const isHovered = i === hoveredRef.current
+        const lbl = labelsRef.current[i] || ['', '']
+        const num = `0${i + 1}`
 
-        // Outer pulse for active
+        // Outer glow for active
         if (isActive) {
-          const pulse = c.createRadialGradient(nx, ny, NR * 0.6, nx, ny, NR + 22)
-          pulse.addColorStop(0, 'rgba(41,63,148,0.22)')
+          const pulse = c.createRadialGradient(nx, ny, NR * 0.5, nx, ny, NR + 24)
+          pulse.addColorStop(0, 'rgba(41,63,148,0.25)')
           pulse.addColorStop(1, 'rgba(41,63,148,0)')
           c.beginPath()
-          c.arc(nx, ny, NR + 22, 0, Math.PI * 2)
+          c.arc(nx, ny, NR + 24, 0, Math.PI * 2)
           c.fillStyle = pulse
           c.fill()
         }
@@ -139,46 +155,46 @@ function JourneyWheel({ activeIdx, onSelect }: {
         c.beginPath()
         c.arc(nx, ny, NR, 0, Math.PI * 2)
         c.fillStyle = isActive
-          ? 'rgba(41,63,148,0.28)'
+          ? 'rgba(41,63,148,0.3)'
           : isHovered
-          ? 'rgba(41,63,148,0.16)'
-          : 'rgba(12,28,56,0.6)'
+          ? 'rgba(41,63,148,0.18)'
+          : 'rgba(12,28,56,0.65)'
         c.fill()
         c.strokeStyle = isActive
-          ? '#5575d8'
+          ? '#6080e8'
           : isHovered
-          ? 'rgba(85,117,216,0.6)'
-          : 'rgba(41,63,148,0.25)'
+          ? 'rgba(96,128,232,0.6)'
+          : 'rgba(41,63,148,0.28)'
         c.lineWidth = isActive ? 2 : 1.5
         c.stroke()
 
         // Step number
-        c.fillStyle = isActive ? 'rgba(150,175,255,0.7)' : 'rgba(100,130,200,0.4)'
+        c.fillStyle = isActive ? 'rgba(160,185,255,0.75)' : 'rgba(100,130,200,0.4)'
         c.font = '500 9px Outfit, system-ui, sans-serif'
         c.textAlign = 'center'
         c.textBaseline = 'middle'
         c.fillText(num, nx, ny - 16)
 
         // Label line 1
-        c.fillStyle = isActive ? '#ffffff' : 'rgba(180,195,235,0.55)'
+        c.fillStyle = isActive ? '#ffffff' : 'rgba(160,180,230,0.5)'
         c.font = `${isActive ? '600' : '400'} 11px Outfit, system-ui, sans-serif`
-        c.fillText(label[0], nx, ny - 2)
+        c.fillText(lbl[0] || '', nx, ny - 2)
 
         // Label line 2
-        c.fillStyle = isActive ? 'rgba(255,255,255,0.85)' : 'rgba(150,170,220,0.45)'
+        c.fillStyle = isActive ? 'rgba(255,255,255,0.85)' : 'rgba(140,165,220,0.4)'
         c.font = `${isActive ? '600' : '400'} 11px Outfit, system-ui, sans-serif`
-        c.fillText(label[1], nx, ny + 12)
+        c.fillText(lbl[1] || '', nx, ny + 12)
       })
 
       // Centre circle
-      const cg = c.createRadialGradient(CX, CY, 0, CX, CY, 54)
-      cg.addColorStop(0, 'rgba(41,63,148,0.18)')
+      const cg = c.createRadialGradient(CX, CY, 0, CX, CY, 56)
+      cg.addColorStop(0, 'rgba(41,63,148,0.2)')
       cg.addColorStop(1, 'rgba(41,63,148,0.06)')
       c.beginPath()
-      c.arc(CX, CY, 54, 0, Math.PI * 2)
+      c.arc(CX, CY, 56, 0, Math.PI * 2)
       c.fillStyle = cg
       c.fill()
-      c.strokeStyle = 'rgba(85,117,216,0.25)'
+      c.strokeStyle = 'rgba(96,128,232,0.22)'
       c.lineWidth = 1
       c.stroke()
 
@@ -204,9 +220,9 @@ function JourneyWheel({ activeIdx, onSelect }: {
     const rect = canvas.getBoundingClientRect()
     const mx = (e.clientX - rect.left) * (420 / rect.width)
     const my = (e.clientY - rect.top) * (420 / rect.height)
-    for (let i = 0; i < nodes.length; i++) {
-      const nx = CX + R * Math.cos(nodes[i].angle)
-      const ny = CY + R * Math.sin(nodes[i].angle)
+    for (let i = 0; i < nodeAngles.length; i++) {
+      const nx = CX + R * Math.cos(nodeAngles[i])
+      const ny = CY + R * Math.sin(nodeAngles[i])
       if (Math.hypot(mx - nx, my - ny) < NR + 10) return i
     }
     return -1
@@ -244,7 +260,7 @@ const sectorData = {
     ],
     journeyTitle: 'From AI risk exposure to a governance posture you can stand behind',
     journeySubtitle: 'Click any node to explore each step. The circle never closes — responsible AI is ongoing.',
-    svgLabels: [['AUDIT', '&'], ['GOV.', 'FRMWK'], ['NAVIG', 'ATOR'], ['ONGO', 'ING']],
+    svgLabels: [['Audit &', 'Assess'], ['Governance', 'Framework'], ['Navigator', 'Benchmark'], ['Ongoing', 'Advisory']],
     cards: [
       { title: 'Algorithmic audit', body: 'We assess your AI systems across people, processes, and technology, not just the model. You receive findings your board can act on and your risk committee can file with confidence.' },
       { title: 'Governance framework', body: 'We build the decision-rights, oversight structures, and accountability mechanisms that turn responsible AI from a principle into a daily practice.' },
@@ -263,7 +279,7 @@ const sectorData = {
     ],
     journeyTitle: 'From AI deployment risk to clinically trustworthy systems',
     journeySubtitle: 'Click any node to explore each step. Entry at any point — the work is continuous.',
-    svgLabels: [['CLINICAL', 'AUDIT'], ['ETHICS', 'FRMWK'], ['PATIENT', 'RIGHTS'], ['ONGO', 'ING']],
+    svgLabels: [['Clinical', 'Audit'], ['Ethics', 'Framework'], ['Patient', 'Rights'], ['Ongoing', 'Partnership']],
     cards: [
       { title: 'Clinical AI audit', body: 'We assess diagnostic and decision-support tools for bias, data quality, and clinical safety across the people using them, the processes governing them, and the technology itself.' },
       { title: 'Ethics and accountability framework', body: 'We build the governance structures that define clinical AI accountability: who decides, who reviews, and how patients are protected when things go wrong.' },
@@ -282,7 +298,7 @@ const sectorData = {
     ],
     journeyTitle: 'From procurement risk to accountable public AI',
     journeySubtitle: 'Click any node to explore each step. Democratic accountability requires ongoing oversight.',
-    svgLabels: [['ASSESS', 'MENT'], ['GOV.', 'POLICY'], ['CITIZEN', 'RIGHTS'], ['ONGO', 'ING']],
+    svgLabels: [['AI', 'Assessment'], ['Governance', 'Policy'], ['Citizen', 'Rights'], ['Ongoing', 'Oversight']],
     cards: [
       { title: 'AI procurement assessment', body: 'We assess AI systems before or after procurement for bias, accountability gaps, and rights implications, giving public institutions the independent technical view they need.' },
       { title: 'AI governance policy', body: 'We help government departments build the internal policies and oversight structures that make responsible AI governance part of how public institutions operate.' },
@@ -301,7 +317,7 @@ const sectorData = {
     ],
     journeyTitle: 'From documentation to structural AI accountability',
     journeySubtitle: 'Click any node to explore each step. Durable change requires building the field long term.',
-    svgLabels: [['EVID', 'ENCE'], ['POLICY', 'ENGAGE'], ['COMM.', 'VOICE'], ['ONGO', 'ING']],
+    svgLabels: [['Harm', 'Documentation'], ['Policy', 'Engagement'], ['Community', 'Voice'], ['Field', 'Building']],
     cards: [
       { title: 'AI harm documentation', body: 'We provide the technical assessment capability that transforms community harm reports into evidenced, credible documentation that can drive accountability.' },
       { title: 'Policy engagement support', body: 'We support civil society organisations to participate meaningfully in AI policy processes: building technical literacy, shaping submissions, and engaging regulators.' },
