@@ -27,14 +27,14 @@ function JourneySVG({ id, labels }: { id: string; labels: string[][] }) {
       <circle cx="340" cy="210" r="28" fill="rgba(41,63,148,0.08)" stroke="rgba(41,63,148,0.35)" strokeWidth="1"/>
       <circle cx="210" cy="340" r="28" fill="rgba(41,63,148,0.08)" stroke="rgba(41,63,148,0.35)" strokeWidth="1"/>
       <circle cx="80" cy="210" r="28" fill="rgba(41,63,148,0.08)" stroke="rgba(41,63,148,0.35)" strokeWidth="1"/>
-      <text x="210" y="74" textAnchor="middle" fill="#293F94" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[0][0]}</text>
-      <text x="210" y="85" textAnchor="middle" fill="#293F94" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[0][1]}</text>
-      <text x="340" y="205" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[1][0]}</text>
-      <text x="340" y="216" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[1][1]}</text>
-      <text x="210" y="334" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[2][0]}</text>
-      <text x="210" y="345" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[2][1]}</text>
-      <text x="80" y="205" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[3][0]}</text>
-      <text x="80" y="216" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Outfit,sans-serif" fontWeight="600" letterSpacing="0.06em">{labels[3][1]}</text>
+      <text x="210" y="74" textAnchor="middle" fill="#293F94" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[0][0]}</text>
+      <text x="210" y="85" textAnchor="middle" fill="#293F94" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[0][1]}</text>
+      <text x="340" y="205" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[1][0]}</text>
+      <text x="340" y="216" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[1][1]}</text>
+      <text x="210" y="334" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[2][0]}</text>
+      <text x="210" y="345" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[2][1]}</text>
+      <text x="80" y="205" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[3][0]}</text>
+      <text x="80" y="216" textAnchor="middle" fill="rgba(41,63,148,0.55)" fontSize="9" fontFamily="Cormorant Garamond,serif" fontWeight="600" letterSpacing="0.06em">{labels[3][1]}</text>
       <circle cx="210" cy="210" r="46" fill="rgba(41,63,148,0.1)" stroke="rgba(41,63,148,0.2)" strokeWidth="1"/>
       <text x="210" y="205" textAnchor="middle" fill="rgba(41,63,148,0.8)" fontSize="10" fontFamily="Cormorant Garamond,serif" fontStyle="italic">Your</text>
       <text x="210" y="220" textAnchor="middle" fill="rgba(41,63,148,0.8)" fontSize="10" fontFamily="Cormorant Garamond,serif" fontStyle="italic">journey</text>
@@ -163,7 +163,15 @@ export default function Home() {
             </div>
             <div className="hero-footer">
               <span className="hero-footer-label">Recognised by</span>
-              <span className="iapp-pill">IAPP 2026 AI Governance Vendor Report · All four vendor categories</span>
+              
+                href="https://iapp.org/resources/article/ai-governance-vendor-report"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="iapp-pill"
+                style={{ textDecoration: 'none', cursor: 'pointer' }}
+              >
+                IAPP 2026 AI Governance Vendor Report · All four vendor categories ↗
+              </a>
             </div>
           </div>
           <div className="hero-globe-wrap">

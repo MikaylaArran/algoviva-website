@@ -25,7 +25,7 @@ body {
   --light:     #9C9A96;
   --white:     #FFFFFF;
   --serif:     var(--font-serif), 'Cormorant Garamond', Georgia, serif;
-  --sans:      var(--font-sans), system-ui, sans-serif;
+  --sans:      var(--font-serif), 'Cormorant Garamond', Georgia, serif;
   --r:         2px;
 }
 
