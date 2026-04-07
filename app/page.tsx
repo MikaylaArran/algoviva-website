@@ -75,7 +75,7 @@ function JourneyWheel({ activeIdx, onSelect }: {
       const a = rotRef.current
       c.save()
       c.beginPath()
-      c.arc(CX, CY, R, a, a + Math.PI * 1.7)
+      c.arc(CX, CY, R, a, a + Math.PI * 2)
       c.strokeStyle = '#4060c8'
       c.lineWidth = 3
       c.lineCap = 'round'
@@ -85,7 +85,7 @@ function JourneyWheel({ activeIdx, onSelect }: {
       c.restore()
 
       // Arrowhead
-      const tip = a + Math.PI * 1.7
+      const tip = a + Math.PI * 2
       const tx = CX + R * Math.cos(tip)
       const ty = CY + R * Math.sin(tip)
       const perp = tip + Math.PI / 2
