@@ -13,209 +13,99 @@ const SECTORS: { id: Sector; label: string }[] = [
   { id: 'civil', label: 'Civil Society' },
 ]
 
-function JourneyWheel({ labels, activeIdx, onSelect }: {
+function JourneyWheel({ activeIdx, onSelect }: {
   labels: string[][]
   activeIdx: number
   onSelect: (i: number) => void
 }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const rafRef = useRef<number>(0)
-  const rotRef = useRef(0)
-  const hoveredRef = useRef<number>(-1)
-  const activeIdxRef = useRef(activeIdx)
-
-  useEffect(() => { activeIdxRef.current = activeIdx }, [activeIdx])
-
-  const nodePositions = [
-    { angle: -Math.PI / 2 },
-    { angle: 0 },
-    { angle: Math.PI / 2 },
-    { angle: Math.PI },
+  const steps = [
+    { num: '01', title: 'Audit & Assess', icon: '◈' },
+    { num: '02', title: 'Governance Framework', icon: '◉' },
+    { num: '03', title: 'Navigator Benchmark', icon: '◎' },
+    { num: '04', title: 'Ongoing Advisory', icon: '○' },
   ]
-
-  const nodeLabels = [
-    ['01', 'Audit &', 'Assess'],
-    ['02', 'Governance', 'Framework'],
-    ['03', 'Navigator', 'Benchmark'],
-    ['04', 'Ongoing', 'Advisory'],
-  ]
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const c = ctx
-    const S = 420
-    canvas.width = S
-    canvas.height = S
-    const cx = S / 2, cy = S / 2, R = 148, nr = 38
-
-    function draw() {
-      c.clearRect(0, 0, S, S)
-
-      // Outer dashed ring
-      c.beginPath()
-      c.arc(cx, cy, R, 0, Math.PI * 2)
-      c.strokeStyle = 'rgba(41,63,148,0.12)'
-      c.lineWidth = 1
-      c.setLineDash([4, 8])
-      c.stroke()
-      c.setLineDash([])
-
-      // Inner ring
-      c.beginPath()
-      c.arc(cx, cy, R * 0.55, 0, Math.PI * 2)
-      c.strokeStyle = 'rgba(41,63,148,0.06)'
-      c.lineWidth = 1
-      c.stroke()
-
-      // Connector lines between nodes
-      nodePositions.forEach(({ angle }, i) => {
-        const next = nodePositions[(i + 1) % 4]
-        const x1 = cx + R * Math.cos(angle)
-        const y1 = cy + R * Math.sin(angle)
-        const x2 = cx + R * Math.cos(next.angle)
-        const y2 = cy + R * Math.sin(next.angle)
-        c.beginPath()
-        c.moveTo(x1, y1)
-        c.lineTo(x2, y2)
-        c.strokeStyle = 'rgba(41,63,148,0.08)'
-        c.lineWidth = 1
-        c.stroke()
-      })
-
-      // Rotating arc highlight
-      const arc = rotRef.current
-      c.beginPath()
-      c.arc(cx, cy, R, arc, arc + Math.PI * 1.6)
-      c.strokeStyle = '#293F94'
-      c.lineWidth = 2.5
-      c.lineCap = 'round'
-      c.stroke()
-
-      // Arrow head on rotating arc
-      const arrowAngle = arc + Math.PI * 1.6
-      const ax = cx + R * Math.cos(arrowAngle)
-      const ay = cy + R * Math.sin(arrowAngle)
-      const ta = arrowAngle + Math.PI / 2
-      c.beginPath()
-      c.moveTo(ax + 8 * Math.cos(ta - 0.5), ay + 8 * Math.sin(ta - 0.5))
-      c.lineTo(ax, ay)
-      c.lineTo(ax + 8 * Math.cos(ta + 0.5), ay + 8 * Math.sin(ta + 0.5))
-      c.strokeStyle = '#293F94'
-      c.lineWidth = 2
-      c.lineCap = 'round'
-      c.stroke()
-
-      // Nodes
-      nodePositions.forEach(({ angle }, i) => {
-        const nx = cx + R * Math.cos(angle)
-        const ny = cy + R * Math.sin(angle)
-        const isActive = i === activeIdxRef.current
-        const isHovered = i === hoveredRef.current
-
-        // Outer glow for active
-        if (isActive) {
-          const grd = c.createRadialGradient(nx, ny, nr * 0.5, nx, ny, nr + 18)
-          grd.addColorStop(0, 'rgba(41,63,148,0.18)')
-          grd.addColorStop(1, 'rgba(41,63,148,0)')
-          c.beginPath()
-          c.arc(nx, ny, nr + 18, 0, Math.PI * 2)
-          c.fillStyle = grd
-          c.fill()
-        }
-
-        // Node fill
-        c.beginPath()
-        c.arc(nx, ny, nr, 0, Math.PI * 2)
-        c.fillStyle = isActive
-          ? 'rgba(41,63,148,0.22)'
-          : isHovered
-          ? 'rgba(41,63,148,0.14)'
-          : 'rgba(41,63,148,0.05)'
-        c.fill()
-
-        // Node border
-        c.strokeStyle = isActive ? '#293F94' : isHovered ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.22)'
-        c.lineWidth = isActive ? 2 : 1
-        c.stroke()
-
-        // Step number
-        c.fillStyle = isActive ? 'rgba(41,63,148,0.5)' : 'rgba(41,63,148,0.25)'
-        c.font = `500 9px Outfit, sans-serif`
-        c.textAlign = 'center'
-        c.textBaseline = 'middle'
-        c.fillText(nodeLabels[i][0], nx, ny - 14)
-
-        // Label lines
-        c.fillStyle = isActive ? '#293F94' : 'rgba(41,63,148,0.55)'
-        c.font = `600 10px Outfit, sans-serif`
-        c.fillText(nodeLabels[i][1], nx, ny - 2)
-        c.fillText(nodeLabels[i][2], nx, ny + 11)
-      })
-
-      // Centre circle
-      const cGrd = c.createRadialGradient(cx, cy, 0, cx, cy, 52)
-      cGrd.addColorStop(0, 'rgba(41,63,148,0.14)')
-      cGrd.addColorStop(1, 'rgba(41,63,148,0.04)')
-      c.beginPath()
-      c.arc(cx, cy, 52, 0, Math.PI * 2)
-      c.fillStyle = cGrd
-      c.fill()
-      c.strokeStyle = 'rgba(41,63,148,0.2)'
-      c.lineWidth = 1
-      c.stroke()
-
-      // Centre text
-      c.fillStyle = 'rgba(41,63,148,0.8)'
-      c.font = 'italic 13px Cormorant Garamond, Georgia, serif'
-      c.textAlign = 'center'
-      c.textBaseline = 'middle'
-      c.fillText('Your', cx, cy - 8)
-      c.fillText('journey', cx, cy + 8)
-
-      rotRef.current = (rotRef.current + 0.004) % (Math.PI * 2)
-      rafRef.current = requestAnimationFrame(draw)
-    }
-
-    rafRef.current = requestAnimationFrame(draw)
-    return () => cancelAnimationFrame(rafRef.current)
-  }, [])
-
-  function getHitNode(e: React.MouseEvent<HTMLCanvasElement>) {
-    const canvas = canvasRef.current
-    if (!canvas) return -1
-    const rect = canvas.getBoundingClientRect()
-    const scaleX = 420 / rect.width
-    const scaleY = 420 / rect.height
-    const mx = (e.clientX - rect.left) * scaleX
-    const my = (e.clientY - rect.top) * scaleY
-    const cx = 210, cy = 210, R = 148, nr = 38
-    for (let i = 0; i < 4; i++) {
-      const nx = cx + R * Math.cos(nodePositions[i].angle)
-      const ny = cy + R * Math.sin(nodePositions[i].angle)
-      const dx = mx - nx, dy = my - ny
-      if (Math.sqrt(dx * dx + dy * dy) < nr + 10) return i
-    }
-    return -1
-  }
 
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: 420, margin: '0 auto' }}>
-      <canvas
-        ref={canvasRef}
-        style={{ width: '100%', height: 'auto', display: 'block', cursor: 'pointer' }}
-        onClick={(e) => { const i = getHitNode(e); if (i >= 0) onSelect(i) }}
-        onMouseMove={(e) => { hoveredRef.current = getHitNode(e) }}
-        onMouseLeave={() => { hoveredRef.current = -1 }}
-      />
+    <div style={{ width: '100%', maxWidth: 380, margin: '0 auto', position: 'relative' }}>
       <div style={{
-        position: 'absolute', bottom: -8, left: '50%', transform: 'translateX(-50%)',
-        fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em',
-        textTransform: 'uppercase', whiteSpace: 'nowrap',
+        position: 'absolute', left: 28, top: 32, bottom: 32,
+        width: 2, background: 'rgba(41,63,148,0.2)', borderRadius: 2,
+      }} />
+      <div style={{
+        position: 'absolute', left: 28, top: 32,
+        width: 2, borderRadius: 2,
+        background: 'linear-gradient(to bottom, #293F94, rgba(41,63,148,0.3))',
+        height: `${(activeIdx / 3) * 100}%`,
+        transition: 'height 0.5s ease',
+      }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {steps.map((step, i) => {
+          const isActive = i === activeIdx
+          const isDone = i < activeIdx
+          return (
+            <div
+              key={i}
+              onClick={() => onSelect(i)}
+              style={{
+                display: 'flex', alignItems: 'flex-start', gap: 20,
+                padding: '18px 0', cursor: 'pointer', position: 'relative',
+                transition: 'all 0.2s',
+              }}
+            >
+              <div style={{
+                width: 58, height: 58, borderRadius: '50%', flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: isActive
+                  ? 'rgba(41,63,148,0.3)'
+                  : isDone
+                  ? 'rgba(41,63,148,0.15)'
+                  : 'rgba(41,63,148,0.06)',
+                border: isActive
+                  ? '2px solid #293F94'
+                  : isDone
+                  ? '1.5px solid rgba(41,63,148,0.4)'
+                  : '1.5px solid rgba(41,63,148,0.2)',
+                boxShadow: isActive ? '0 0 20px rgba(41,63,148,0.25)' : 'none',
+                transition: 'all 0.3s ease',
+                zIndex: 2,
+              }}>
+                <span style={{
+                  fontSize: 18,
+                  color: isActive ? '#293F94' : isDone ? 'rgba(41,63,148,0.6)' : 'rgba(41,63,148,0.3)',
+                  transition: 'color 0.3s',
+                }}>{step.icon}</span>
+              </div>
+              <div style={{ paddingTop: 10 }}>
+                <div style={{
+                  fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: isActive ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.2)',
+                  marginBottom: 4, transition: 'color 0.3s',
+                }}>{step.num}</div>
+                <div style={{
+                  fontSize: 15, fontWeight: isActive ? 600 : 400,
+                  color: isActive ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                  fontFamily: 'Outfit, sans-serif',
+                  transition: 'all 0.3s',
+                  letterSpacing: '-0.01em',
+                }}>{step.title}</div>
+                {isActive && (
+                  <div style={{
+                    marginTop: 6, fontSize: 11,
+                    color: 'rgba(255,255,255,0.35)',
+                    letterSpacing: '0.04em',
+                  }}>→ See details on the right</div>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+      <div style={{
+        marginTop: 8, fontSize: 10, color: 'rgba(255,255,255,0.25)',
+        letterSpacing: '0.1em', textTransform: 'uppercase',
       }}>
-        Click a node to explore
+        Click any step to explore
       </div>
     </div>
   )
@@ -232,7 +122,7 @@ const sectorData = {
       { label: 'The trust deficit', text: 'When customers cannot understand why a decision was made about them, trust erodes and regulators notice before you do.' },
     ],
     journeyTitle: 'From AI risk exposure to a governance posture you can stand behind',
-    journeySubtitle: 'Click any node to explore each step. The circle never closes — responsible AI is ongoing.',
+    journeySubtitle: 'Click any step to explore. The journey never ends — responsible AI is an ongoing practice.',
     svgLabels: [['AUDIT', '&'], ['GOV.', 'FRMWK'], ['NAVIG', 'ATOR'], ['ONGO', 'ING']],
     cards: [
       { title: 'Algorithmic audit', body: 'We assess your AI systems across people, processes, and technology, not just the model. You receive findings your board can act on and your risk committee can file with confidence.' },
@@ -251,7 +141,7 @@ const sectorData = {
       { label: 'The consent challenge', text: 'Patients have a right to understand how their data is used and how decisions about their care are made. Few health AI systems currently support this meaningfully.' },
     ],
     journeyTitle: 'From AI deployment risk to clinically trustworthy systems',
-    journeySubtitle: 'Click any node to explore each step. Entry at any point — the work is continuous.',
+    journeySubtitle: 'Click any step to explore. Entry at any point — the work is continuous.',
     svgLabels: [['CLINICAL', 'AUDIT'], ['ETHICS', 'FRMWK'], ['PATIENT', 'RIGHTS'], ['ONGO', 'ING']],
     cards: [
       { title: 'Clinical AI audit', body: 'We assess diagnostic and decision-support tools for bias, data quality, and clinical safety across the people using them, the processes governing them, and the technology itself.' },
@@ -270,7 +160,7 @@ const sectorData = {
       { label: 'The rights exposure', text: 'Government AI systems touching social grants, policing, or access to services carry constitutional rights implications. Most have not been assessed for these risks.' },
     ],
     journeyTitle: 'From procurement risk to accountable public AI',
-    journeySubtitle: 'Click any node to explore each step. Democratic accountability requires ongoing oversight.',
+    journeySubtitle: 'Click any step to explore. Democratic accountability requires ongoing oversight.',
     svgLabels: [['ASSESS', 'MENT'], ['GOV.', 'POLICY'], ['CITIZEN', 'RIGHTS'], ['ONGO', 'ING']],
     cards: [
       { title: 'AI procurement assessment', body: 'We assess AI systems before or after procurement for bias, accountability gaps, and rights implications, giving public institutions the independent technical view they need.' },
@@ -289,7 +179,7 @@ const sectorData = {
       { label: 'The community disconnect', text: 'AI governance debates happen at a remove from the communities most affected. Authentic community voice requires structured mechanisms, not just consultation.' },
     ],
     journeyTitle: 'From documentation to structural AI accountability',
-    journeySubtitle: 'Click any node to explore each step. Durable change requires building the field long term.',
+    journeySubtitle: 'Click any step to explore. Durable change requires building the field long term.',
     svgLabels: [['EVID', 'ENCE'], ['POLICY', 'ENGAGE'], ['COMM.', 'VOICE'], ['ONGO', 'ING']],
     cards: [
       { title: 'AI harm documentation', body: 'We provide the technical assessment capability that transforms community harm reports into evidenced, credible documentation that can drive accountability.' },
