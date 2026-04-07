@@ -53,7 +53,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
     function draw() {
       c.clearRect(0, 0, 420, 420)
 
-      // Background glow
       const bg = c.createRadialGradient(CX, CY, 0, CX, CY, R + 40)
       bg.addColorStop(0, 'rgba(41,63,148,0.06)')
       bg.addColorStop(1, 'rgba(0,0,0,0)')
@@ -62,7 +61,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
       c.fillStyle = bg
       c.fill()
 
-      // Full dashed ring
       c.save()
       c.beginPath()
       c.arc(CX, CY, R, 0, Math.PI * 2)
@@ -72,7 +70,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
       c.stroke()
       c.restore()
 
-      // Animated glowing arc (full circle overlay)
       const a = rotRef.current
       c.save()
       c.beginPath()
@@ -86,7 +83,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
       c.stroke()
       c.restore()
 
-      // Bright highlight arc (shorter, fast-moving)
       c.save()
       c.beginPath()
       c.arc(CX, CY, R, a, a + Math.PI * 0.4)
@@ -98,7 +94,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
       c.stroke()
       c.restore()
 
-      // Arrowhead
       const tip = a + Math.PI * 0.4
       const tx = CX + R * Math.cos(tip)
       const ty = CY + R * Math.sin(tip)
@@ -116,7 +111,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
       c.stroke()
       c.restore()
 
-      // Spoke lines
       nodeAngles.forEach((angle) => {
         const nx = CX + R * Math.cos(angle)
         const ny = CY + R * Math.sin(angle)
@@ -131,7 +125,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
         c.stroke()
       })
 
-      // Nodes
       nodeAngles.forEach((angle, i) => {
         const nx = CX + R * Math.cos(angle)
         const ny = CY + R * Math.sin(angle)
@@ -140,7 +133,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
         const lbl = labelsRef.current[i] || ['', '']
         const num = `0${i + 1}`
 
-        // Outer glow for active
         if (isActive) {
           const pulse = c.createRadialGradient(nx, ny, NR * 0.5, nx, ny, NR + 24)
           pulse.addColorStop(0, 'rgba(41,63,148,0.25)')
@@ -151,7 +143,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
           c.fill()
         }
 
-        // Node circle
         c.beginPath()
         c.arc(nx, ny, NR, 0, Math.PI * 2)
         c.fillStyle = isActive
@@ -168,25 +159,21 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
         c.lineWidth = isActive ? 2 : 1.5
         c.stroke()
 
-        // Step number
         c.fillStyle = isActive ? 'rgba(160,185,255,0.75)' : 'rgba(100,130,200,0.4)'
         c.font = '500 9px Outfit, system-ui, sans-serif'
         c.textAlign = 'center'
         c.textBaseline = 'middle'
         c.fillText(num, nx, ny - 16)
 
-        // Label line 1
         c.fillStyle = isActive ? '#ffffff' : 'rgba(160,180,230,0.5)'
         c.font = `${isActive ? '600' : '400'} 11px Outfit, system-ui, sans-serif`
         c.fillText(lbl[0] || '', nx, ny - 2)
 
-        // Label line 2
         c.fillStyle = isActive ? 'rgba(255,255,255,0.85)' : 'rgba(140,165,220,0.4)'
         c.font = `${isActive ? '600' : '400'} 11px Outfit, system-ui, sans-serif`
         c.fillText(lbl[1] || '', nx, ny + 12)
       })
 
-      // Centre circle
       const cg = c.createRadialGradient(CX, CY, 0, CX, CY, 56)
       cg.addColorStop(0, 'rgba(41,63,148,0.2)')
       cg.addColorStop(1, 'rgba(41,63,148,0.06)')
@@ -198,7 +185,6 @@ function JourneyWheel({ labels, activeIdx, onSelect }: {
       c.lineWidth = 1
       c.stroke()
 
-      // Centre text
       c.fillStyle = 'rgba(200,215,255,0.75)'
       c.font = 'italic 13px Cormorant Garamond, Georgia, serif'
       c.textAlign = 'center'
@@ -616,78 +602,6 @@ export default function Home() {
           <div className="ns-row"><span className="ns-row-l">Sector benchmark</span><span className="ns-row-v" style={{ background: 'rgba(41,63,148,0.2)', color: 'var(--brand-l)' }}>Top quartile</span></div>
           <div className="ns-row"><span className="ns-row-l">Priority recommendation</span><span className="ns-row-v" style={{ background: 'rgba(192,80,80,0.15)', color: '#E08080' }}>POPIA audit</span></div>
           <div className="ns-row"><span className="ns-row-l">Context</span><span className="ns-row-v" style={{ color: 'rgba(255,255,255,0.3)' }}>African benchmark</span></div>
-        </div>
-      </section>
-
-      {/* AUTHORITY */}
-      <section id="authority">
-        <div ref={addReveal} className="reveal">
-          <div className="section-label">Track record</div>
-          <h2 className="section-title">Built for Africa.<br />Recognised globally.</h2>
-          <p className="section-body" style={{ maxWidth: 520 }}>Our work is grounded in African contexts and validated by international standards.</p>
-        </div>
-        <div className="auth-grid">
-          {[
-            { num: <><span>4</span>/4</>, label: 'IAPP vendor categories', body: 'Named in all four categories of the IAPP 2026 AI Governance Vendor Report.' },
-            { num: <>1<span>st</span></>, label: 'African AI benchmark', body: 'Navigator is building the first and only African AI governance benchmark.' },
-            { num: <><span>3</span></>, label: 'Integrated service areas', body: 'Assurance. Governance. Digital Rights. Three practices built for African contexts.' },
-          ].map((a, i) => (
-            <div key={i} ref={addReveal} className="reveal" style={{ transitionDelay: `${i * 0.1}s` }}>
-              <div className="auth-num">{a.num}</div>
-              <div className="auth-label">{a.label}</div>
-              <div className="auth-body">{a.body}</div>
-            </div>
-          ))}
-        </div>
-        <div className="iapp-block">
-          <div className="iapp-text-area">
-            <strong>IAPP 2026 AI Governance Vendor Report</strong>
-            <p>AlgoViva has been named in all four vendor categories — the only African firm to do so.</p>
-          </div>
-          <div className="iapp-cats">
-            {['AI Assurance & Auditing', 'AI Governance Frameworks', 'Digital Rights & Compliance', 'AI Risk Assessment'].map((cat) => (
-              <div className="iapp-cat" key={cat}>{cat}</div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* RESOURCES */}
-      <section id="resources">
-        <div ref={addReveal} className="reveal">
-          <div className="section-label">Resources</div>
-          <h2 className="section-title">Thinking publicly<br />about AI governance</h2>
-          <p className="section-body" style={{ maxWidth: 520 }}>We publish what we learn. Frameworks, case insights, policy briefs, and African Digital Rights updates.</p>
-        </div>
-        <div className="res-grid" ref={addReveal} style={{ transitionDelay: '0.1s' }}>
-          {[
-            { tag: 'Framework', title: 'AlgoViva AI Governance Principles', desc: 'Our public framework for responsible AI governance in African organisational contexts.', footer: '◆ Working paper · 2025' },
-            { tag: 'Policy brief', title: 'POPIA and AI: What financial services institutions need to know', desc: 'A practical guide to POPIA obligations on automated decision-making for South African financial institutions.', footer: '◆ Insight · 2025' },
-            { tag: 'Digital Rights brief', title: 'African Digital Rights Monitor: Q2 2025', desc: 'Tracking AI harms, rights developments, and community impacts across South Africa, Kenya, and Nigeria.', footer: '◆ Quarterly brief · Q2 2025' },
-            { tag: 'Methodology', title: 'AlgoViva Algorithmic Audit Methodology', desc: 'How we audit AI systems and why purely technical audits miss what matters most.', footer: '◆ Working paper · 2025' },
-            { tag: 'Case insight', title: 'Bias in automated credit scoring: what we found', desc: 'An anonymised account of findings from an AI assurance engagement in South African financial services.', footer: '◆ Case insight · 2025' },
-            { tag: 'AlgoViva Kids', title: '2025 Impact Report: AlgoViva Kids', desc: 'What we learned from bringing AI literacy and ethics education into South African schools.', footer: '◆ Annual report · 2025' },
-          ].map((r, i) => (
-            <a href="#" className="res-card" key={i}>
-              <div className="res-tag">{r.tag}</div>
-              <div className="res-title">{r.title}</div>
-              <div className="res-desc">{r.desc}</div>
-              <div className="res-footer">{r.footer}</div>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      {/* KIDS */}
-      <section id="kids">
-        <div ref={addReveal} className="reveal">
-          <div className="section-label">AlgoViva Kids</div>
-          <h2 className="section-title">Ethical AI starts<br />with the next generation</h2>
-          <p className="section-body">We believe the communities most affected by AI deserve agency in how it develops, and that starts with young people. AlgoViva Kids brings AI literacy, rights education, and ethical thinking into schools and community organisations across South Africa.</p>
-        </div>
-        <div ref={addReveal} className="kids-card reveal" style={{ transitionDelay: '0.15s' }}>
-          <p>&ldquo;Ethical AI cannot be built by the few for the many. It must be shaped by the many, including those who will live with its consequences longest.&rdquo;</p>
-          <cite>AlgoViva · Johannesburg, South Africa</cite>
         </div>
       </section>
 
