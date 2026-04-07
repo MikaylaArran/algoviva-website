@@ -19,13 +19,10 @@ export default function Nav() {
   ]
 
   return (
-    <nav style={{
-      background: '#ffffff',
-      borderBottom: '1px solid rgba(0,0,0,0.08)',
-    }}>
+    <nav style={{ background: '#ffffff', borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
       <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
         <Image
-          src="/logo.png"
+          src="/logo-blue.png"
           alt="AlgoViva"
           width={140}
           height={52}
@@ -47,7 +44,6 @@ export default function Nav() {
               href={l.href}
               className={path === l.href ? 'nav-active' : ''}
               onClick={() => setOpen(false)}
-              style={{ color: '#58575C' }}
             >
               {l.label}
             </Link>

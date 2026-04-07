@@ -7,7 +7,7 @@ export default function Footer() {
       <div>
         <Link href="/">
           <Image
-            src="/Algoviva_white_logo.png"
+            src="/logo-white.png"
             alt="AlgoViva"
             width={160}
             height={60}
