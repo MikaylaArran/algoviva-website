@@ -628,7 +628,7 @@ export default function Home() {
         </div>
         <div ref={addReveal} className="cta-contact reveal" style={{ transitionDelay: '0.2s' }}>
           <p>Talk to us directly</p>
-          <a href="mailto:hello@algoviva.com" className="cta-email">hello@algoviva.com</a>
+          <a href="mailto:mikayla@algoviva.com" className="cta-email">mikayla@algoviva.com</a>
           <p className="cta-loc">Johannesburg, South Africa · www.algoviva.com</p>
         </div>
       </section>

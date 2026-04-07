@@ -33,7 +33,7 @@ export default function Footer() {
         </div>
         <div className="ft-copy">
           © 2025 AlgoViva (Pty) Ltd · Johannesburg ·{' '}
-          <a href="mailto:hello@algoviva.com">hello@algoviva.com</a>
+          <a href="mailto:mikayla@algoviva.com">mikayla@algoviva.com</a>
         </div>
       </div>
     </footer>

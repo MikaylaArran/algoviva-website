@@ -120,11 +120,11 @@ export default function ContactPage() {
             </div>
 
             {/* Email */}
-            <a href="mailto:hello@algoviva.com" style={contactCardStyle}>
+            <a href="mailto:mikayla@algoviva.com" style={contactCardStyle}>
               <div style={contactIconStyle}>✉</div>
               <div>
                 <div style={contactLabelStyle}>Email</div>
-                <div style={contactValueStyle}>hello@algoviva.com</div>
+                <div style={contactValueStyle}>mikayla@algoviva.com</div>
                 <div style={contactHintStyle}>We respond within two business days</div>
               </div>
             </a>
