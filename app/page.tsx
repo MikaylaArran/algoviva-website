@@ -152,7 +152,7 @@ export default function Home() {
         <div className="hero-split-inner">
           <div className="hero-text">
             <div className="african-badge">Black African-owned and led</div>
-            <div className="hero-tag">Ethical AI · South Africa · Africa</div>
+            <div className="hero-tag">Ethical AI · South Africa · </div>
             <h1>AI that serves <em>people</em><br />and planet</h1>
             <p className="hero-sub">
               AlgoViva helps organisations in financial services, health, government, and civil society build AI systems that are trustworthy, accountable, and genuinely fit for the African context. We bring the expertise. We carry the values. We have skin in the game.
