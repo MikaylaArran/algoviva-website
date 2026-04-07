@@ -141,9 +141,7 @@ export default function Home() {
     if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el)
   }
 
-  const sector = sectorData[activeSector]
-
-  return (
+return (
     <>
       {/* HERO */}
       <section className="hero hero-split">
@@ -163,7 +161,7 @@ export default function Home() {
             </div>
             <div className="hero-footer">
               <span className="hero-footer-label">Recognised by</span>
-              <span className="iapp-pill">IAPP 2026 AI Governance Vendor Report · All four vendor categories</span>
+              <a href="/ai_governance_vendor_report_2026-2.pdf" target="_blank" rel="noopener noreferrer" className="iapp-pill">IAPP 2026 AI Governance Vendor Report · All four vendor categories ↗</a>
             </div>
           </div>
           <div className="hero-globe-wrap">
