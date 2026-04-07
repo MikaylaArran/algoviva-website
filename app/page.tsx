@@ -259,7 +259,7 @@ const sectorData = {
       { label: 'The trust deficit', text: 'When customers cannot understand why a decision was made about them, trust erodes and regulators notice before you do.' },
     ],
     journeyTitle: 'From AI risk exposure to a governance posture you can stand behind',
-    journeySubtitle: 'Click any node to explore each step. The circle never closes — responsible AI is ongoing.',
+    journeySubtitle: 'You can enter this process at any point. The circle never closes because responsible AI is an ongoing practice, not a project.',
     svgLabels: [['Audit &', 'Assess'], ['Governance', 'Framework'], ['Navigator', 'Benchmark'], ['Ongoing', 'Advisory']],
     cards: [
       { title: 'Algorithmic audit', body: 'We assess your AI systems across people, processes, and technology, not just the model. You receive findings your board can act on and your risk committee can file with confidence.' },
@@ -278,7 +278,7 @@ const sectorData = {
       { label: 'The consent challenge', text: 'Patients have a right to understand how their data is used and how decisions about their care are made. Few health AI systems currently support this meaningfully.' },
     ],
     journeyTitle: 'From AI deployment risk to clinically trustworthy systems',
-    journeySubtitle: 'Click any node to explore each step. Entry at any point — the work is continuous.',
+    journeySubtitle: 'Entry at any point. The work is continuous because clinical AI evolves continuously.',
     svgLabels: [['Clinical', 'Audit'], ['Ethics', 'Framework'], ['Patient', 'Rights'], ['Ongoing', 'Partnership']],
     cards: [
       { title: 'Clinical AI audit', body: 'We assess diagnostic and decision-support tools for bias, data quality, and clinical safety across the people using them, the processes governing them, and the technology itself.' },
@@ -297,7 +297,7 @@ const sectorData = {
       { label: 'The rights exposure', text: 'Government AI systems touching social grants, policing, or access to services carry constitutional rights implications. Most have not been assessed for these risks.' },
     ],
     journeyTitle: 'From procurement risk to accountable public AI',
-    journeySubtitle: 'Click any node to explore each step. Democratic accountability requires ongoing oversight.',
+    journeySubtitle: 'Democratic accountability for AI requires ongoing oversight, not a once-off review.',
     svgLabels: [['AI', 'Assessment'], ['Governance', 'Policy'], ['Citizen', 'Rights'], ['Ongoing', 'Oversight']],
     cards: [
       { title: 'AI procurement assessment', body: 'We assess AI systems before or after procurement for bias, accountability gaps, and rights implications, giving public institutions the independent technical view they need.' },
@@ -316,7 +316,7 @@ const sectorData = {
       { label: 'The community disconnect', text: 'AI governance debates happen at a remove from the communities most affected. Authentic community voice requires structured mechanisms, not just consultation.' },
     ],
     journeyTitle: 'From documentation to structural AI accountability',
-    journeySubtitle: 'Click any node to explore each step. Durable change requires building the field long term.',
+    journeySubtitle: 'Durable change requires building the field, not just fighting fires. We are in it for the long term.',
     svgLabels: [['Harm', 'Documentation'], ['Policy', 'Engagement'], ['Community', 'Voice'], ['Field', 'Building']],
     cards: [
       { title: 'AI harm documentation', body: 'We provide the technical assessment capability that transforms community harm reports into evidenced, credible documentation that can drive accountability.' },
