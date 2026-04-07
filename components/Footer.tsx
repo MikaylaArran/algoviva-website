@@ -1,10 +1,24 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
     <footer>
       <div>
-        <div className="ft-brand">Algo<span>Viva</span></div>
+        <Link href="/">
+          <Image
+            src="/Algoviva_white_logo.png"
+            alt="AlgoViva"
+            width={160}
+            height={60}
+            style={{
+              objectFit: 'contain',
+              height: 48,
+              width: 'auto',
+              mixBlendMode: 'screen',
+            }}
+          />
+        </Link>
         <div className="ft-tag">For the life of people and planet</div>
       </div>
       <div className="ft-right">
