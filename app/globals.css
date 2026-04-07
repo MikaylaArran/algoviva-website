@@ -3,6 +3,7 @@
 html { scroll-behavior: smooth; font-size: 16px; }
 body {
   font-family: var(--font-sans), 'Outfit', system-ui, sans-serif;
+  font-size: 15px;
   font-weight: 400;
   background: #F7F4EF;
   color: #18181A;
@@ -24,7 +25,7 @@ body {
   --muted:     #58575C;
   --light:     #9C9A96;
   --white:     #FFFFFF;
---serif:     var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+--serif:     var(--font-sans), 'Outfit', system-ui, sans-serif;
   --sans:      var(--font-sans), 'Outfit', system-ui, sans-serif;
   --r:         2px;
 }
